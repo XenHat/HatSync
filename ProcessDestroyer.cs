@@ -7,13 +7,11 @@ namespace MaxwellGPUIdle
 {
     public class ProcessDestroyer
     {
-        public static List<string> compiler_processes = new List<string>();
-
         public static void KillCompilerProcesses()
         {
             // TODO: Move to idle loop
             //compiler_processes = Helper.Convert(Properties.Settings.Default.KnownGPUProcesses);
-            foreach (string process_name in compiler_processes)
+            foreach (string process_name in Properties.Settings.Default.KnownGPUProcesses)
             {
                 KillProcessByName(process_name);
             }
@@ -37,21 +35,22 @@ namespace MaxwellGPUIdle
                     string process_with_id = processToKill + " [" + x.Id + "]";
                     try
                     {
+                        //Debug.WriteLine("Killing " + process_with_id);
                         x.Kill();
                         x.WaitForExit();
                         x.Dispose();
                     }
-#if DEBUG
+                    //#if DEBUG
                     catch (System.Exception e)
                     {
-                        System.Console.WriteLine(e.Message);
                         MessageBox.Show("I'm sorry master..." + System.Environment.NewLine + System.Environment.NewLine +
                             "I couldn't kill " + process_with_id + "... (シ_ _)シ" + System.Environment.NewLine + System.Environment.NewLine +
-                            "It said:" + System.Environment.NewLine + e.Message, "Gomenasai!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            "It said:" + System.Environment.NewLine + e.Message + System.Environment.NewLine + System.Environment.NewLine + e.ToString(), "Gomenasai!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-#endif
+                    //#endif
                     finally
                     {
+                        Debug.WriteLine("Killed " + process_with_id);
                     }
                 }
             }

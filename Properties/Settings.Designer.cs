@@ -25,19 +25,18 @@ namespace MaxwellGPUIdle.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
-            "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" >"
-            // Currently known programs that are problematic to GPU Idling
-            + "<string>Calculator</string>"
-            + "<string>Weather</string>"
-            + "<string>Photos</string>"
-            + "<string>Dropbox</string>"
-            + "<string>Calculator</string>"
-            + "<string>Films &amp; TV</string>"
-            + "<string>Store</string>"
-            + "<string>Xbox</string>"
-            // End
-            + "</ArrayOfString>")]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+  <string>ApplicationFrameHost</string>
+  <string>Calculator</string>
+  <string>Weather</string>
+  <string>Photos</string>
+  <string>Dropbox</string>
+  <string>Calculator</string>
+  <string>Films &amp; TV</string>
+  <string>Store</string>
+  <string>Xbox</string>
+</ArrayOfString>")]
         public global::System.Collections.Specialized.StringCollection KnownGPUProcesses {
             get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["KnownGPUProcesses"]));
@@ -49,7 +48,7 @@ namespace MaxwellGPUIdle.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool ShowNotifications {
             get {
                 return ((bool)(this["ShowNotifications"]));
@@ -80,6 +79,18 @@ namespace MaxwellGPUIdle.Properties {
             }
             set {
                 this["AutomaticStartup"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool KillOnIdle {
+            get {
+                return ((bool)(this["KillOnIdle"]));
+            }
+            set {
+                this["KillOnIdle"] = value;
             }
         }
     }

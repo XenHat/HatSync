@@ -23,6 +23,8 @@ namespace MaxwellGPUIdle
         /// </summary>
         private bool isAboutLoaded = false;
 
+        //private string titles = "";
+
         /// <summary>
         /// Creates this instance.
         /// </summary>
@@ -33,102 +35,31 @@ namespace MaxwellGPUIdle
             // TODO: Cache the feeds results to avoid heavy rebuilding every time a checkbox value
             //       changes :(
             ContextMenuStrip menu = new ContextMenuStrip();
+            menu.ShowImageMargin = false;
             ToolStripMenuItem item;
 
-            if (Helper.NeedUpgrade)
+            // Add one entry to this menu to kill everything
+            item = new ToolStripMenuItem
             {
-                Settings.Default.Upgrade();
-                Settings.Default.Save();
-                Helper.NeedUpgrade = false;
-            }
-            Settings.Default.Reload();
-            bool show_notifications = allow_notifications && Settings.Default.ShowNotifications;
+                Text = "Force Idle Now!",
+                //Image = Resources.Exit
+            };
+            item.Click += delegate (object sender, EventArgs e) { Kill_Click(sender, e); };
+            menu.Items.Add(item); // Add menu entry with the feed name
+            menu.Items.Add(new ToolStripSeparator()); // Separator.
+            string temporaryRssFile = System.IO.Path.GetTempFileName();
 
-            bool debug = Settings.Default.Debug;
-            // TODO: Move this to some kind of refresh
-            List<string> FeedList = Helper.Convert(Settings.Default.KnownGPUProcesses);
-            ProcessDestroyer.compiler_processes = FeedList;
-            // TODO: Move this to the timed loop
-            List<string> feed_title_list = new List<string>();
-            if (FeedList != null)
+            foreach (string process_name in Settings.Default.KnownGPUProcesses)
             {
-                short max_entry_per_site = 1;
-                StringCollection loaded_urls = new StringCollection();
-                // Add one entry to this menu to kill everything
                 item = new ToolStripMenuItem
                 {
-                    Text = "Force Idle Now!",
-                    //Image = Resources.Exit
+                    Text = process_name,
+                    //Image = Resources.Rss
                 };
-                feed_title_list.Add(item.Text);
-                item.Click += delegate (object sender, EventArgs e) { Kill_Click(sender, e); };
+                item.Click += delegate (object sender, EventArgs e) { FeedEntry_Click(sender, e, process_name); };
                 menu.Items.Add(item); // Add menu entry with the feed name
-                menu.Items.Add(new ToolStripSeparator()); // Separator.
-                string temporaryRssFile = System.IO.Path.GetTempFileName();
+            }
 
-                foreach (string url_iter in FeedList)
-                {
-                    string tip_title = "";
-                    if (show_notifications)
-                    {
-                        tip_title = "Loading";
-                    }
-                    if (loaded_urls.Contains(url_iter))
-                    {
-                        if (show_notifications)
-                        {
-                            tip_title += "... (Ignored)";
-                        }
-                    }
-                    else if (!Helper.ValidateExecutableName(url_iter))
-                    {
-                        if (show_notifications)
-                        {
-                            tip_title += "... (Invalid)";
-                        }
-                    }
-                    else
-                    {
-                        item = new ToolStripMenuItem
-                        {
-                            Text = url_iter,
-                            //Image = Resources.Rss
-                        };
-                        feed_title_list.Add(item.Text);
-                        item.Click += delegate (object sender, EventArgs e) { FeedEntry_Click(sender, e, url_iter); };
-                        menu.Items.Add(item); // Add menu entry with the feed name
-                        loaded_urls.Add(url_iter);
-                    }
-                }
-                // Must be saved after the foreach loop to prevent overwriting the working data
-                Settings.Default.KnownGPUProcesses.Clear();
-                Settings.Default.KnownGPUProcesses = loaded_urls;
-                Settings.Default.Save();
-                if (File.Exists(temporaryRssFile))
-                {
-                    try
-                    {
-                        File.Delete(temporaryRssFile);
-                    }
-                    catch (Exception ex)
-                    {
-                        Program.ExceptionHandler(ex);
-                    }
-                }
-            }
-            if (show_notifications)
-            {
-                string titles = "";
-                foreach (string title in FeedList)
-                {
-                    titles += title + System.Environment.NewLine;
-                }
-                if (titles != "")
-                {
-                    showToolTip(titles, "Loaded Feeds");
-                }
-            }
-            menu.ShowImageMargin = false;
             return menu;
         }
 
@@ -204,6 +135,19 @@ namespace MaxwellGPUIdle
                 item.Image = Resources.checkmark;
             }
             item.Click += new EventHandler(Startup_Click);
+            menu.Items.Add(item);
+
+            // Add to Startup
+            item = new ToolStripMenuItem()
+            {
+                Text = "Kill on Idle",
+                Checked = Settings.Default.KillOnIdle,
+            };
+            if (item.Checked)
+            {
+                item.Image = Resources.checkmark;
+            }
+            item.Click += new EventHandler(KillOnIdle_Click);
             menu.Items.Add(item);
 
             // Separator.
@@ -294,6 +238,19 @@ namespace MaxwellGPUIdle
         }
 
         /// <summary>
+        /// Handles the Click event of the KillOnIdle control.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+        private void KillOnIdle_Click(object sender, EventArgs e)
+        {
+            // TODO: Shouldn't we use the event data?
+            Settings.Default.KillOnIdle = !Settings.Default.KillOnIdle;
+            Settings.Default.Save();
+            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu(false);
+        }
+
+        /// <summary>
         /// Handles the Click event of the Notification Setting control.
         /// </summary>
         /// <param name="sender">The sender.</param>
@@ -311,17 +268,6 @@ namespace MaxwellGPUIdle
             }
             Settings.Default.Save();
             MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu(false);
-        }
-
-        private void showToolTip(string text, string title = "")
-        {
-            if (title == "")
-            {
-                title = Program.ProductName;
-            }
-            ProcessIcon.ni.BalloonTipTitle = title;
-            ProcessIcon.ni.BalloonTipText = text;
-            ProcessIcon.ni.ShowBalloonTip(1);
         }
 
         /// <summary>

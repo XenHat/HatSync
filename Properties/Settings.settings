@@ -4,16 +4,29 @@
   <Settings>
     <Setting Name="KnownGPUProcesses" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
-&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" /&gt;</Value>
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;ApplicationFrameHost&lt;/string&gt;
+  &lt;string&gt;Calculator&lt;/string&gt;
+  &lt;string&gt;Weather&lt;/string&gt;
+  &lt;string&gt;Photos&lt;/string&gt;
+  &lt;string&gt;Dropbox&lt;/string&gt;
+  &lt;string&gt;Calculator&lt;/string&gt;
+  &lt;string&gt;Films &amp;amp; TV&lt;/string&gt;
+  &lt;string&gt;Store&lt;/string&gt;
+  &lt;string&gt;Xbox&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
     </Setting>
     <Setting Name="ShowNotifications" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="Debug" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="AutomaticStartup" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="KillOnIdle" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>
