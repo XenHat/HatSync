@@ -44,25 +44,25 @@ namespace MaxwellGPUIdle
         public static bool isTimerRunning = false;
         public static string ProductName = ((AssemblyProductAttribute)Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), true)[0]).Product;
 
+        public static void ExceptionHandler(Exception exception)
+        {
+            // Meep.
+            System.Windows.Forms.MessageBox.Show(
+                exception.ToString(), ":( Sortahandled Exception! - " + ((AssemblyProductAttribute)Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), true)[0]).Product.ToString(),
+                System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+        }
+
         public static void OnTimedEvent(object sender, ElapsedEventArgs e)
         {
             if (Properties.Settings.Default.KillOnIdle)
             {
                 // NOTE: I would prefer to check the process' CPU usage but this appears to be
                 //       difficult to obtain.
-                if (CPUStats.currentCPUUsage < 30.0)
+                //if (CPUStats.currentCPUUsage < 30.0)
                 {
                     ProcessDestroyer.KillCompilerProcesses();
                 }
             }
-        }
-
-        internal static void ExceptionHandler(Exception exception)
-        {
-            // Meep.
-            System.Windows.Forms.MessageBox.Show(
-                exception.ToString(), ":( Sortahandled Exception! - " + ((AssemblyProductAttribute)Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), true)[0]).Product.ToString(),
-                System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace MaxwellGPUIdle
 
                     System.Timers.Timer aTimer = new System.Timers.Timer();
                     aTimer.Elapsed += Program.OnTimedEvent;
-                    aTimer.Interval = 7200; // 120 minutes
+                    aTimer.Interval = 1000 * 7200; // 120 minutes
                     aTimer.Enabled = true;
                     Stopwatch sw = Stopwatch.StartNew();
                     isTimerRunning = true;
@@ -186,7 +186,7 @@ namespace MaxwellGPUIdle
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("catched exception");
+                    ExceptionHandler(e);
                 }
                 Console.ReadLine();
             }
