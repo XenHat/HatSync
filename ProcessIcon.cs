@@ -60,9 +60,7 @@ namespace MaxwellGPUIdle
             // Handle mouse button clicks.
             if (e.Button == MouseButtons.Left)
             {
-                ni.ContextMenuStrip = new ContextMenus().CreateLoadingMenu();
-                mi.Invoke(ni, null);
-                ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu(false, false);
+                ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
                 mi.Invoke(ni, null);
             }
             else if (e.Button == MouseButtons.Right)

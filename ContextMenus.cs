@@ -29,11 +29,9 @@ namespace MaxwellGPUIdle
         /// Creates this instance.
         /// </summary>
         /// <returns>ContextMenuStrip</returns>
-        public ContextMenuStrip CreateFeedsMenu(bool allow_notifications = true, bool has_checkbox = true)
+        public ContextMenuStrip CreateFeedsMenu()
         {
             // Add the default menu options.
-            // TODO: Cache the feeds results to avoid heavy rebuilding every time a checkbox value
-            //       changes :(
             ContextMenuStrip menu = new ContextMenuStrip();
             menu.ShowImageMargin = false;
             ToolStripMenuItem item;
@@ -42,7 +40,6 @@ namespace MaxwellGPUIdle
             item = new ToolStripMenuItem
             {
                 Text = "Force Idle Now!",
-                //Image = Resources.Exit
             };
             item.Click += delegate (object sender, EventArgs e) { Kill_Click(sender, e); };
             menu.Items.Add(item); // Add menu entry with the feed name
@@ -54,7 +51,6 @@ namespace MaxwellGPUIdle
                 item = new ToolStripMenuItem
                 {
                     Text = process_name,
-                    //Image = Resources.Rss
                 };
                 item.Click += delegate (object sender, EventArgs e) { FeedEntry_Click(sender, e, process_name); };
                 menu.Items.Add(item); // Add menu entry with the feed name
@@ -82,88 +78,58 @@ namespace MaxwellGPUIdle
         {
             ContextMenuStrip menu = new ContextMenuStrip();
             menu.ShowImageMargin = true;
-            ToolStripMenuItem item;
-
-            // Kill background processes.
-            item = new ToolStripMenuItem()
+            // TODO: Static
+            List<string> menu_names = new List<string>()
             {
-                Text = "Kill Background Processes",
-                Image = Resources.Exit
+                "Notifications",
+                "Run at Login",
+                "Kill on Idle",
+                "Add Executable",
+                "About",
+                "Quit"
             };
-            item.Click += new System.EventHandler(Kill_Click);
-            menu.Items.Add(item);
-
-            // Add a feed.
-            item = new ToolStripMenuItem()
+            List<System.Drawing.Image> menu_resources = new List<System.Drawing.Image>()
             {
-                Text = "Add Executable",
-                Image = Resources.Rss
+                Resources.checkmark,
+                Resources.checkmark,
+                Resources.checkmark,
+                Resources.Rss,
+                Resources.About,
+                Resources.Exit
             };
-            item.Click += new EventHandler(AddFeed_Click);
-            menu.Items.Add(item);
-
-            // About box
-            item = new ToolStripMenuItem()
+            List<EventHandler> menu_events_handlers = new List<EventHandler>()
             {
-                Text = "About",
-                Image = Resources.About
+                Notification_Setting_Click,
+                Startup_Click,
+                KillOnIdle_Click,
+                AddExecutable,
+                About_Click,
+                Exit_Click
             };
-            item.Click += new EventHandler(About_Click);
-            menu.Items.Add(item);
-
-            // Notifications On/Off
-            item = new ToolStripMenuItem()
+            List<bool> menu_items_enabled = new List<bool>()
             {
-                Text = "Notifications",
-                Checked = Settings.Default.ShowNotifications,
+                Settings.Default.ShowNotifications,
+                Settings.Default.AutomaticStartup,
+                Settings.Default.KillOnIdle,
+                true,
+                true,
+                true
             };
-            if (item.Checked)
-            {
-                item.Image = Resources.checkmark;
-            }
-            item.Click += new EventHandler(Notification_Setting_Click);
-            menu.Items.Add(item);
 
-            // Add to Startup
-            item = new ToolStripMenuItem()
+            for (int i = 0; i < menu_names.Count; i++)
             {
-                Text = "Run at Login",
-                Checked = Settings.Default.AutomaticStartup,
+                ToolStripMenuItem item = new ToolStripMenuItem();
+                item.Text = menu_names[i];
+                item.Click += menu_events_handlers[i];
+                if (menu_items_enabled[i])
+                {
+                    item.Image = menu_resources[i];
+                }
+                menu.Items.Add(item);
             };
-            if (item.Checked)
-            {
-                item.Image = Resources.checkmark;
-            }
-            item.Click += new EventHandler(Startup_Click);
-            menu.Items.Add(item);
 
-            // Add to Startup
-            item = new ToolStripMenuItem()
-            {
-                Text = "Kill on Idle",
-                Checked = Settings.Default.KillOnIdle,
-            };
-            if (item.Checked)
-            {
-                item.Image = Resources.checkmark;
-            }
-            item.Click += new EventHandler(KillOnIdle_Click);
-            menu.Items.Add(item);
-
-            // Separator.
-            menu.Items.Add(new ToolStripSeparator());
-
-            // Exit.
-            item = new ToolStripMenuItem()
-            {
-                Text = "Exit",
-                Image = Resources.Exit
-            };
-            item.Click += new System.EventHandler(Exit_Click);
-            menu.Items.Add(item);
-
-            System.GC.Collect(3, System.GCCollectionMode.Forced);
-            System.GC.WaitForFullGCComplete();
+            //System.GC.Collect(3, System.GCCollectionMode.Forced);
+            //System.GC.WaitForFullGCComplete();
 
             return menu;
         }
@@ -188,7 +154,7 @@ namespace MaxwellGPUIdle
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
-        private void AddFeed_Click(object sender, EventArgs e)
+        private void AddExecutable(object sender, EventArgs e)
         {
             new AddFeed().ShowDialog();
         }
@@ -247,7 +213,7 @@ namespace MaxwellGPUIdle
             // TODO: Shouldn't we use the event data?
             Settings.Default.KillOnIdle = !Settings.Default.KillOnIdle;
             Settings.Default.Save();
-            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu(false);
+            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
         }
 
         /// <summary>
@@ -267,7 +233,7 @@ namespace MaxwellGPUIdle
                 Settings.Default.ShowNotifications = true;
             }
             Settings.Default.Save();
-            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu(false);
+            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
         }
 
         /// <summary>
@@ -281,7 +247,7 @@ namespace MaxwellGPUIdle
             Integration.AddToStartup(startUp);
             Settings.Default.AutomaticStartup = startUp;
             Settings.Default.Save();
-            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu(false);
+            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
         }
 
         private class MyXmlReader : XmlTextReader
