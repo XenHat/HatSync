@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace TrayReader
+namespace MaxwellGPUIdle
 {
     partial class AboutBox : Form
     {

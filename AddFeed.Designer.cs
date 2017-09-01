@@ -1,4 +1,4 @@
-﻿namespace TrayReader
+﻿namespace MaxwellGPUIdle
 {
     partial class AddFeed
     {
@@ -68,7 +68,7 @@
             this.Controls.Add(this.addFeedButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "AddFeed";
-            this.Text = "RSS Feed URL";
+            this.Text = "Executable Name";
             this.Load += new System.EventHandler(this.AddFeed_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

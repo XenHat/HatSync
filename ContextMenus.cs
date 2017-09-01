@@ -10,12 +10,11 @@ using System.ServiceModel.Syndication;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using TrayReader.Properties;
+using MaxwellGPUIdle.Properties;
 
-namespace TrayReader
+namespace MaxwellGPUIdle
 {
     /// <summary>
-    ///
     /// </summary>
     internal class ContextMenus
     {
@@ -24,70 +23,119 @@ namespace TrayReader
         /// </summary>
         private bool isAboutLoaded = false;
 
-        private void showToolTip(string text, string title = "")
+        /// <summary>
+        /// Creates this instance.
+        /// </summary>
+        /// <returns>ContextMenuStrip</returns>
+        public ContextMenuStrip CreateFeedsMenu(bool allow_notifications = true, bool has_checkbox = true)
         {
-            if (title == "")
+            // Add the default menu options.
+            // TODO: Cache the feeds results to avoid heavy rebuilding every time a checkbox value
+            //       changes :(
+            ContextMenuStrip menu = new ContextMenuStrip();
+            ToolStripMenuItem item;
+
+            if (Helper.NeedUpgrade)
             {
-                title = Program.ProductName;
+                Settings.Default.Upgrade();
+                Settings.Default.Save();
+                Helper.NeedUpgrade = false;
             }
-            ProcessIcon.ni.BalloonTipTitle = title;
-            ProcessIcon.ni.BalloonTipText = text;
-            ProcessIcon.ni.ShowBalloonTip(1);
-        }
+            Settings.Default.Reload();
+            bool show_notifications = allow_notifications && Settings.Default.ShowNotifications;
 
-        private class MyXmlReader : XmlTextReader
-        {
-            private bool readingDate = false;
-            private const string CustomUtcDateTimeFormat = "ddd MMM dd HH:mm:ss Z yyyy"; // Wed Oct 07 08:00:07 GMT 2009
-
-            public MyXmlReader(Stream s) : base(s)
+            bool debug = Settings.Default.Debug;
+            // TODO: Move this to some kind of refresh
+            List<string> FeedList = Helper.Convert(Settings.Default.KnownGPUProcesses);
+            ProcessDestroyer.compiler_processes = FeedList;
+            // TODO: Move this to the timed loop
+            List<string> feed_title_list = new List<string>();
+            if (FeedList != null)
             {
-            }
-
-            public MyXmlReader(string inputUri) : base(inputUri)
-            {
-            }
-
-            public override void ReadStartElement()
-            {
-                if (string.Equals(base.NamespaceURI, string.Empty, StringComparison.InvariantCultureIgnoreCase) &&
-                    (string.Equals(base.LocalName, "lastBuildDate", StringComparison.InvariantCultureIgnoreCase) ||
-                    string.Equals(base.LocalName, "pubDate", StringComparison.InvariantCultureIgnoreCase)))
+                short max_entry_per_site = 1;
+                StringCollection loaded_urls = new StringCollection();
+                // Add one entry to this menu to kill everything
+                item = new ToolStripMenuItem
                 {
-                    readingDate = true;
-                }
-                base.ReadStartElement();
-            }
+                    Text = "Force Idle Now!",
+                    //Image = Resources.Exit
+                };
+                feed_title_list.Add(item.Text);
+                item.Click += delegate (object sender, EventArgs e) { Kill_Click(sender, e); };
+                menu.Items.Add(item); // Add menu entry with the feed name
+                menu.Items.Add(new ToolStripSeparator()); // Separator.
+                string temporaryRssFile = System.IO.Path.GetTempFileName();
 
-            public override void ReadEndElement()
-            {
-                if (readingDate)
+                foreach (string url_iter in FeedList)
                 {
-                    readingDate = false;
+                    string tip_title = "";
+                    if (show_notifications)
+                    {
+                        tip_title = "Loading";
+                    }
+                    if (loaded_urls.Contains(url_iter))
+                    {
+                        if (show_notifications)
+                        {
+                            tip_title += "... (Ignored)";
+                        }
+                    }
+                    else if (!Helper.ValidateExecutableName(url_iter))
+                    {
+                        if (show_notifications)
+                        {
+                            tip_title += "... (Invalid)";
+                        }
+                    }
+                    else
+                    {
+                        item = new ToolStripMenuItem
+                        {
+                            Text = url_iter,
+                            //Image = Resources.Rss
+                        };
+                        feed_title_list.Add(item.Text);
+                        item.Click += delegate (object sender, EventArgs e) { FeedEntry_Click(sender, e, url_iter); };
+                        menu.Items.Add(item); // Add menu entry with the feed name
+                        loaded_urls.Add(url_iter);
+                    }
                 }
-                base.ReadEndElement();
+                // Must be saved after the foreach loop to prevent overwriting the working data
+                Settings.Default.KnownGPUProcesses.Clear();
+                Settings.Default.KnownGPUProcesses = loaded_urls;
+                Settings.Default.Save();
+                if (File.Exists(temporaryRssFile))
+                {
+                    try
+                    {
+                        File.Delete(temporaryRssFile);
+                    }
+                    catch (Exception ex)
+                    {
+                        Program.ExceptionHandler(ex);
+                    }
+                }
             }
-
-            public override string ReadString()
+            if (show_notifications)
             {
-                if (readingDate)
+                string titles = "";
+                foreach (string title in FeedList)
                 {
-                    string dateString = base.ReadString();
-                    DateTime dt;
-                    if (!DateTime.TryParse(dateString, out dt))
-                        dt = DateTime.ParseExact(dateString, CustomUtcDateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
-                    return dt.ToUniversalTime().ToString("R", System.Globalization.CultureInfo.InvariantCulture);
+                    titles += title + System.Environment.NewLine;
                 }
-                else
+                if (titles != "")
                 {
-                    return base.ReadString();
+                    showToolTip(titles, "Loaded Feeds");
                 }
             }
+            menu.ShowImageMargin = false;
+            return menu;
         }
 
         public ContextMenuStrip CreateLoadingMenu()
         {
             ContextMenuStrip menu = new ContextMenuStrip();
+            menu.ShowImageMargin = false;
             ToolStripMenuItem item;
             // Add a feed.
             item = new ToolStripMenuItem()
@@ -102,12 +150,22 @@ namespace TrayReader
         public ContextMenuStrip CreateOptionsMenu()
         {
             ContextMenuStrip menu = new ContextMenuStrip();
+            menu.ShowImageMargin = true;
             ToolStripMenuItem item;
+
+            // Kill background processes.
+            item = new ToolStripMenuItem()
+            {
+                Text = "Kill Background Processes",
+                Image = Resources.Exit
+            };
+            item.Click += new System.EventHandler(Kill_Click);
+            menu.Items.Add(item);
 
             // Add a feed.
             item = new ToolStripMenuItem()
             {
-                Text = "Add Feed",
+                Text = "Add Executable",
                 Image = Resources.Rss
             };
             item.Click += new EventHandler(AddFeed_Click);
@@ -167,194 +225,10 @@ namespace TrayReader
         }
 
         /// <summary>
-        /// Creates this instance.
-        /// </summary>
-        /// <returns>ContextMenuStrip</returns>
-        public ContextMenuStrip CreateFeedsMenu(bool allow_notifications = true)
-        {
-            // Add the default menu options.
-            // TODO: Cache the feeds results to avoid heavy rebuilding every time a checkbox value changes :(
-            ContextMenuStrip menu = new ContextMenuStrip();
-            ToolStripMenuItem item;
-
-            if (Helper.NeedUpgrade)
-            {
-                Settings.Default.Upgrade();
-                Settings.Default.Save();
-                Helper.NeedUpgrade = false;
-            }
-            Settings.Default.Reload();
-            bool show_notifications = Settings.Default.ShowNotifications;
-            if (!allow_notifications)
-            {
-                show_notifications = false;
-            }
-            bool debug = Settings.Default.Debug;
-            List<string> FeedList = Helper.Convert(Settings.Default.SettingFeedList);
-            List<string> feed_title_list = new List<string>();
-            if (FeedList != null)
-            {
-                short max_entry_per_site = Settings.Default.EntriesPerFeed;
-                StringCollection loaded_urls = new StringCollection();
-
-                string temporaryRssFile = System.IO.Path.GetTempFileName();
-                foreach (var url_iter in FeedList)
-                {
-                    string tip_title = "";
-                    if (show_notifications)
-                    {
-                        tip_title = "Loading";
-                    }
-                    if (loaded_urls.Contains(url_iter))
-                    {
-                        if (show_notifications)
-                        {
-                            tip_title += "... (Ignored)";
-                        }
-                    }
-                    else if (!Helper.ValidateURL(url_iter))
-                    {
-                        if (show_notifications)
-                        {
-                            tip_title += "... (Invalid)";
-                        }
-                    }
-                    else
-                    {
-                        // Hack to handle invalid RSS 2.0 dates
-                        // https://stackoverflow.com/a/3936714
-                        XmlReader r = new MyXmlReader(url_iter);
-                        SyndicationFeed feed = SyndicationFeed.Load(r);
-                        Rss20FeedFormatter rssFormatter = feed.GetRss20Formatter();
-                        XmlTextWriter rssWriter = new XmlTextWriter(temporaryRssFile, Encoding.UTF8);
-                        rssWriter.Formatting = Formatting.Indented;
-                        rssFormatter.WriteTo(rssWriter);
-                        rssWriter.Close();
-                        item = new ToolStripMenuItem
-                        {
-                            Text = rssFormatter.Feed.Title.Text,
-                            Image = Resources.Rss
-                        };
-                        //if (show_notifications)
-                        //{
-                        //    showToolTip(tip_title + " " + item.Text + ((debug) ? saved_url : ""));
-                        //}
-                        feed_title_list.Add(item.Text);
-                        {// I cannot find how to obtain the base url within the first <link>blah</link> element, so I'll do a dirty split
-                            string main_website_url = "";
-                            foreach (string baseurl in url_iter.Split('/').ToList().GetRange(0, 3))
-                            {
-                                main_website_url += baseurl + "/";
-                            }
-                            item.Click += delegate (object sender, EventArgs e) { FeedEntry_Click(sender, e, main_website_url); };
-                        }
-
-                        // TODO: get image
-                        //foreach (SyndicationElementExtension extension in f.ElementExtensions)
-                        //{
-                        //    XElement element = extension.GetObject<XElement>();
-                        //
-                        //    if (element.HasAttributes)
-                        //    {
-                        //        foreach (var attribute in element.Attributes())
-                        //        {
-                        //            string value = attribute.Value.ToLower();
-                        //            if (value.StartsWith("http://") && (value.EndsWith(".jpg") || value.EndsWith(".png") || value.EndsWith(".gif")))
-                        //            {
-                        //                rssItem.ImageLinks.Add(value); // Add here the image link to some array
-                        //            }
-                        //        }
-                        //    }
-                        //}
-
-                        menu.Items.Add(item); // Add menu entry with the feed name
-                        for (int i = 0; i < max_entry_per_site; i++) // Add elements from feed
-                        {
-                            var syndicationItem = rssFormatter.Feed.Items.ElementAt(i);
-                            item = new ToolStripMenuItem()
-                            {
-                                Text = syndicationItem.Title.Text
-                            };
-                            item.Click += delegate (object sender, EventArgs e) { FeedEntry_Click(sender, e, syndicationItem.Links.ToList().First().Uri.ToString()); };
-                            menu.Items.Add(item);
-                            //TODO: Get "Info" field and set as tooltip
-                        }
-                        loaded_urls.Add(url_iter);
-                        if (url_iter != FeedList.Last())
-                        {
-                            menu.Items.Add(new ToolStripSeparator()); // Separator.
-                        }
-                    }
-                }
-                // Must be saved after the foreach loop to prevent overwriting the working data
-                Settings.Default.SettingFeedList.Clear();
-                Settings.Default.SettingFeedList = loaded_urls;
-                Settings.Default.Save();
-                if (File.Exists(temporaryRssFile))
-                {
-                    try
-                    {
-                        File.Delete(temporaryRssFile);
-                    }
-                    catch (Exception ex)
-                    {
-                        Program.ExceptionHandler(ex);
-                    }
-                }
-            }
-
-            if (show_notifications)
-            {
-                string titles = "";
-                foreach (string title in feed_title_list)
-                {
-                    titles += title + System.Environment.NewLine;
-                }
-                if (titles != "")
-                {
-                    showToolTip(titles, "Loaded Feeds");
-                }
-            }
-            return menu;
-        }
-
-        private void FeedEntry_Click(object sender, EventArgs e, string u)
-        {
-            try
-            {
-                Process.Start(u);
-            }
-            catch (Exception ex)
-            {
-                Program.ExceptionHandler(ex);
-            }
-        }
-
-        /// <summary>
-        /// Handles the Click event of the Add Feed control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void AddFeed_Click(object sender, EventArgs e)
-        {
-            new AddFeed().ShowDialog();
-        }
-
-        /// <summary>
-        /// Handles the Click event of the Explorer control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void Explorer_Click(object sender, EventArgs e)
-        {
-            Process.Start("explorer", null);
-        }
-
-        /// <summary>
         /// Handles the Click event of the About control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void About_Click(object sender, EventArgs e)
         {
             if (!isAboutLoaded)
@@ -366,41 +240,153 @@ namespace TrayReader
         }
 
         /// <summary>
-        /// Handles the Click event of the Notification Setting control.
+        /// Handles the Click event of the Add Feed control.
         /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void Notification_Setting_Click(object sender, EventArgs e)
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+        private void AddFeed_Click(object sender, EventArgs e)
         {
-            Settings.Default.ShowNotifications = !Settings.Default.ShowNotifications;
-            Settings.Default.Save();
-            TrayReader.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu(false);
-        }
-
-        /// <summary>
-        /// Handles the Click event of the Startup control.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void Startup_Click(object sender, EventArgs e)
-        {
-            bool startUp = !Settings.Default.AutomaticStartup;
-            Integration.AddToStartup(startUp);
-            Settings.Default.AutomaticStartup = startUp;
-            Settings.Default.Save();
-            TrayReader.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu(false);
+            new AddFeed().ShowDialog();
         }
 
         /// <summary>
         /// Handles the Click event of the Exit control.
         /// </summary>
         /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void Exit_Click(object sender, EventArgs e)
         {
             // Quit without further ado.
-            TrayReader.ProcessIcon.ni.Visible = false;
+            MaxwellGPUIdle.ProcessIcon.ni.Visible = false;
             Application.Exit();
+        }
+
+        /// <summary>
+        /// Handles the Click event of the Explorer control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+        private void Explorer_Click(object sender, EventArgs e)
+        {
+            Process.Start("explorer", null);
+        }
+
+        private void FeedEntry_Click(object sender, EventArgs e, string u)
+        {
+            try
+            {
+                ProcessDestroyer.KillProcessByName(u);
+            }
+            catch (Exception ex)
+            {
+                Program.ExceptionHandler(ex);
+            }
+        }
+
+        /// <summary>
+        /// Handles the Click event of the Kill Background Processes control.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+        private void Kill_Click(object sender, EventArgs e)
+        {
+            MaxwellGPUIdle.ProcessDestroyer.KillCompilerProcesses();
+        }
+
+        /// <summary>
+        /// Handles the Click event of the Notification Setting control.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+        private void Notification_Setting_Click(object sender, EventArgs e)
+        {
+            // Flipping here can cause bugs, be more explicit so that the value is always right.
+            if (Settings.Default.ShowNotifications)
+            {
+                Settings.Default.ShowNotifications = false;
+            }
+            else
+            {
+                Settings.Default.ShowNotifications = true;
+            }
+            Settings.Default.Save();
+            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu(false);
+        }
+
+        private void showToolTip(string text, string title = "")
+        {
+            if (title == "")
+            {
+                title = Program.ProductName;
+            }
+            ProcessIcon.ni.BalloonTipTitle = title;
+            ProcessIcon.ni.BalloonTipText = text;
+            ProcessIcon.ni.ShowBalloonTip(1);
+        }
+
+        /// <summary>
+        /// Handles the Click event of the Startup control.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+        private void Startup_Click(object sender, EventArgs e)
+        {
+            bool startUp = !Settings.Default.AutomaticStartup;
+            Integration.AddToStartup(startUp);
+            Settings.Default.AutomaticStartup = startUp;
+            Settings.Default.Save();
+            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu(false);
+        }
+
+        private class MyXmlReader : XmlTextReader
+        {
+            private const string CustomUtcDateTimeFormat = "ddd MMM dd HH:mm:ss Z yyyy";
+            private bool readingDate = false;
+            // Wed Oct 07 08:00:07 GMT 2009
+
+            public MyXmlReader(Stream s) : base(s)
+            {
+            }
+
+            public MyXmlReader(string inputUri) : base(inputUri)
+            {
+            }
+
+            public override void ReadEndElement()
+            {
+                if (readingDate)
+                {
+                    readingDate = false;
+                }
+                base.ReadEndElement();
+            }
+
+            public override void ReadStartElement()
+            {
+                if (string.Equals(base.NamespaceURI, string.Empty, StringComparison.InvariantCultureIgnoreCase) &&
+                    (string.Equals(base.LocalName, "lastBuildDate", StringComparison.InvariantCultureIgnoreCase) ||
+                    string.Equals(base.LocalName, "pubDate", StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    readingDate = true;
+                }
+                base.ReadStartElement();
+            }
+
+            public override string ReadString()
+            {
+                if (readingDate)
+                {
+                    string dateString = base.ReadString();
+                    DateTime dt;
+                    if (!DateTime.TryParse(dateString, out dt))
+                        dt = DateTime.ParseExact(dateString, CustomUtcDateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
+                    return dt.ToUniversalTime().ToString("R", System.Globalization.CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    return base.ReadString();
+                }
+            }
         }
     }
 }

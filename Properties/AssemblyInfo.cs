@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TrayReader")]
-[assembly: AssemblyDescription("RSS Feed reader")]
+[assembly: AssemblyTitle("MaxwellGPUIdle")]
+[assembly: AssemblyDescription("An utility that aims to help improving idle power usage for the NVIDIA Maxwell by killing background processes using the GPU")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TrayReader")]
+[assembly: AssemblyProduct("MaxwellGPUIdle")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("56ad6cbe-bedc-4362-82b9-67f2d7340667")]
+[assembly: Guid("8e651efd-adfe-4a83-9b2c-5dfd0fcdc3a1")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -34,5 +34,5 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.2")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: NeutralResourcesLanguage("")]
+[assembly: NeutralResourcesLanguage("en")]
 

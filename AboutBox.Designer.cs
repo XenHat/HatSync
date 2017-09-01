@@ -1,4 +1,4 @@
-﻿namespace TrayReader
+﻿namespace MaxwellGPUIdle
 {
 	partial class AboutBox
 	{

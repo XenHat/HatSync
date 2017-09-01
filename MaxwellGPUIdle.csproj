@@ -8,8 +8,8 @@
     <ProjectGuid>{F317AF2E-9704-4A2A-BDAE-B4662ED9483B}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TrayReader</RootNamespace>
-    <AssemblyName>TrayReader</AssemblyName>
+    <RootNamespace>MaxwellGPUIdle</RootNamespace>
+    <AssemblyName>MaxwellGPUIdle</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>TrayReader.Program</StartupObject>
+    <StartupObject>MaxwellGPUIdle.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Images\rss_icon.ico</ApplicationIcon>
@@ -67,11 +67,13 @@
     <Compile Include="AddFeed.Designer.cs">
       <DependentUpon>AddFeed.cs</DependentUpon>
     </Compile>
+    <Compile Include="ProcessDestroyer.cs" />
     <Compile Include="ProcessIcon.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="AddFeed.resx">
       <DependentUpon>AddFeed.cs</DependentUpon>

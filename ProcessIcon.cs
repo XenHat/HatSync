@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Reflection;
 using System.Windows.Forms;
-using TrayReader.Properties;
+using MaxwellGPUIdle.Properties;
 
-namespace TrayReader
+namespace MaxwellGPUIdle
 {
     /// <summary>
-    ///
     /// </summary>
     internal class ProcessIcon : IDisposable
     {
@@ -16,7 +15,7 @@ namespace TrayReader
         public static NotifyIcon ni;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ProcessIcon"/> class.
+        /// Initializes a new instance of the <see cref="ProcessIcon" /> class.
         /// </summary>
         public ProcessIcon()
         {
@@ -31,8 +30,8 @@ namespace TrayReader
         {
             // Put the icon in the system tray and allow it react to mouse clicks.
             ni.MouseClick += new MouseEventHandler(ni_MouseClick);
-            ni.Icon = Resources.TrayReader;
-            ni.Text = "TrayReader";
+            ni.Icon = Resources.MaxwellGPUIdle;
+            ni.Text = "MaxwellGPUIdle";
             ni.Visible = true;
 
             // Attach a context menu.
@@ -52,7 +51,9 @@ namespace TrayReader
         /// Handles the MouseClick event of the ni control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.Windows.Forms.MouseEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">
+        /// The <see cref="System.Windows.Forms.MouseEventArgs" /> instance containing the event data.
+        /// </param>
         private void ni_MouseClick(object sender, MouseEventArgs e)
         {
             MethodInfo mi = typeof(NotifyIcon).GetMethod("ShowContextMenu", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -61,7 +62,7 @@ namespace TrayReader
             {
                 ni.ContextMenuStrip = new ContextMenus().CreateLoadingMenu();
                 mi.Invoke(ni, null);
-                ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu(false);
+                ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu(false, false);
                 mi.Invoke(ni, null);
             }
             else if (e.Button == MouseButtons.Right)
