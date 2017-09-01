@@ -1,16 +1,10 @@
-﻿using System;
+﻿using MaxwellGPUIdle.Properties;
+using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.ServiceModel.Syndication;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using MaxwellGPUIdle.Properties;
 
 namespace MaxwellGPUIdle
 {
@@ -21,9 +15,37 @@ namespace MaxwellGPUIdle
         /// <summary>
         /// Is the About box displayed?
         /// </summary>
-        private bool isAboutLoaded = false;
+        private static bool isAboutLoaded = false;
 
-        //private string titles = "";
+        private static List<EventHandler> menu_events_handlers = new List<EventHandler>()
+        {
+            Notification_Setting_Click,
+            Startup_Click,
+            KillOnIdle_Click,
+            AddExecutable,
+            About_Click,
+            Exit_Click
+        };
+
+        private static List<string> menu_names = new List<string>()
+        {
+            "Notifications",
+            "Run at Login",
+            "Kill on Idle",
+            "Add Executable",
+            "About",
+            "Quit"
+        };
+
+        private static List<System.Drawing.Image> menu_resources = new List<System.Drawing.Image>()
+        {
+            Resources.checkmark,
+            Resources.checkmark,
+            Resources.checkmark,
+            Resources.Rss,
+            Resources.About,
+            Resources.Exit
+        };
 
         /// <summary>
         /// Creates this instance.
@@ -44,68 +66,12 @@ namespace MaxwellGPUIdle
             item.Click += delegate (object sender, EventArgs e) { Kill_Click(sender, e); };
             menu.Items.Add(item); // Add menu entry with the feed name
             menu.Items.Add(new ToolStripSeparator()); // Separator.
-            string temporaryRssFile = System.IO.Path.GetTempFileName();
 
-            foreach (string process_name in Settings.Default.KnownGPUProcesses)
-            {
-                item = new ToolStripMenuItem
-                {
-                    Text = process_name,
-                };
-                item.Click += delegate (object sender, EventArgs e) { FeedEntry_Click(sender, e, process_name); };
-                menu.Items.Add(item); // Add menu entry with the feed name
-            }
+            // huge test
 
-            return menu;
-        }
-
-        public ContextMenuStrip CreateLoadingMenu()
-        {
-            ContextMenuStrip menu = new ContextMenuStrip();
-            menu.ShowImageMargin = false;
-            ToolStripMenuItem item;
-            // Add a feed.
-            item = new ToolStripMenuItem()
-            {
-                Text = "Loading..."
-            };
-            item.Enabled = false;
-            menu.Items.Add(item);
-            return menu;
-        }
-
-        public ContextMenuStrip CreateOptionsMenu()
-        {
-            ContextMenuStrip menu = new ContextMenuStrip();
             menu.ShowImageMargin = true;
             // TODO: Static
-            List<string> menu_names = new List<string>()
-            {
-                "Notifications",
-                "Run at Login",
-                "Kill on Idle",
-                "Add Executable",
-                "About",
-                "Quit"
-            };
-            List<System.Drawing.Image> menu_resources = new List<System.Drawing.Image>()
-            {
-                Resources.checkmark,
-                Resources.checkmark,
-                Resources.checkmark,
-                Resources.Rss,
-                Resources.About,
-                Resources.Exit
-            };
-            List<EventHandler> menu_events_handlers = new List<EventHandler>()
-            {
-                Notification_Setting_Click,
-                Startup_Click,
-                KillOnIdle_Click,
-                AddExecutable,
-                About_Click,
-                Exit_Click
-            };
+
             List<bool> menu_items_enabled = new List<bool>()
             {
                 Settings.Default.ShowNotifications,
@@ -118,18 +84,19 @@ namespace MaxwellGPUIdle
 
             for (int i = 0; i < menu_names.Count; i++)
             {
-                ToolStripMenuItem item = new ToolStripMenuItem();
-                item.Text = menu_names[i];
-                item.Click += menu_events_handlers[i];
+                ToolStripMenuItem watt = new ToolStripMenuItem();
+                watt.Text = menu_names[i];
+                watt.Click += menu_events_handlers[i];
+                // TODO: Still need to avoid rebuilding the menu every time the menu changes
                 if (menu_items_enabled[i])
                 {
-                    item.Image = menu_resources[i];
+                    watt.Image = menu_resources[i];
                 }
-                menu.Items.Add(item);
+
+                menu.Items.Add(watt);
             };
 
-            //System.GC.Collect(3, System.GCCollectionMode.Forced);
-            //System.GC.WaitForFullGCComplete();
+            // end
 
             return menu;
         }
@@ -139,7 +106,7 @@ namespace MaxwellGPUIdle
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
-        private void About_Click(object sender, EventArgs e)
+        private static void About_Click(object sender, EventArgs e)
         {
             if (!isAboutLoaded)
             {
@@ -154,7 +121,7 @@ namespace MaxwellGPUIdle
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
-        private void AddExecutable(object sender, EventArgs e)
+        private static void AddExecutable(object sender, EventArgs e)
         {
             new AddFeed().ShowDialog();
         }
@@ -164,11 +131,50 @@ namespace MaxwellGPUIdle
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
-        private void Exit_Click(object sender, EventArgs e)
+        private static void Exit_Click(object sender, EventArgs e)
         {
             // Quit without further ado.
             MaxwellGPUIdle.ProcessIcon.ni.Visible = false;
             Application.Exit();
+        }
+
+        /// <summary>
+        /// Handles the Click event of the KillOnIdle control.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+        private static void KillOnIdle_Click(object sender, EventArgs e)
+        {
+            // TODO: Shouldn't we use the event data?
+            Settings.Default.KillOnIdle = !Settings.Default.KillOnIdle;
+            Settings.Default.Save();
+            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
+        }
+
+        /// <summary>
+        /// Handles the Click event of the Notification Setting control.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+        private static void Notification_Setting_Click(object sender, EventArgs e)
+        {
+            // Flipping here can cause bugs, be more explicit so that the value is always right.
+            Settings.Default.ShowNotifications = !Settings.Default.ShowNotifications;
+            Settings.Default.Save();
+            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
+        }
+
+        /// <summary>
+        /// Handles the Click event of the Startup control.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+        private static void Startup_Click(object sender, EventArgs e)
+        {
+            Settings.Default.AutomaticStartup = !Settings.Default.AutomaticStartup;
+            Settings.Default.Save();
+            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
+            Integration.AddToStartup();
         }
 
         /// <summary>
@@ -201,53 +207,6 @@ namespace MaxwellGPUIdle
         private void Kill_Click(object sender, EventArgs e)
         {
             MaxwellGPUIdle.ProcessDestroyer.KillCompilerProcesses();
-        }
-
-        /// <summary>
-        /// Handles the Click event of the KillOnIdle control.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
-        private void KillOnIdle_Click(object sender, EventArgs e)
-        {
-            // TODO: Shouldn't we use the event data?
-            Settings.Default.KillOnIdle = !Settings.Default.KillOnIdle;
-            Settings.Default.Save();
-            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
-        }
-
-        /// <summary>
-        /// Handles the Click event of the Notification Setting control.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
-        private void Notification_Setting_Click(object sender, EventArgs e)
-        {
-            // Flipping here can cause bugs, be more explicit so that the value is always right.
-            if (Settings.Default.ShowNotifications)
-            {
-                Settings.Default.ShowNotifications = false;
-            }
-            else
-            {
-                Settings.Default.ShowNotifications = true;
-            }
-            Settings.Default.Save();
-            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
-        }
-
-        /// <summary>
-        /// Handles the Click event of the Startup control.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
-        private void Startup_Click(object sender, EventArgs e)
-        {
-            bool startUp = !Settings.Default.AutomaticStartup;
-            Integration.AddToStartup(startUp);
-            Settings.Default.AutomaticStartup = startUp;
-            Settings.Default.Save();
-            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
         }
 
         private class MyXmlReader : XmlTextReader

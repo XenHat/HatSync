@@ -1,5 +1,4 @@
 ﻿// Based on https://www.codeproject.com/Articles/290013/Formless-System-Tray-Application
-using MaxwellGPUIdle.Properties;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

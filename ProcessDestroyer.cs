@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace MaxwellGPUIdle
@@ -22,10 +20,7 @@ namespace MaxwellGPUIdle
             if (processToKill == null)
                 return;
             // save cycles and do this once
-            //Process[] processes_list = Process.GetProcessesByName(processToKill);
-            //processToKill = "Dropbox";
-            //System.Collections.Generic.IEnumerable<Process> processes_list = Process.GetProcesses().Where(pr => pr.MainWindowTitle == processToKill); // Kill by window Title! Works with UWP Apps!
-            System.Collections.Generic.IEnumerable<Process> processes_list = Process.GetProcesses();
+            System.Collections.Generic.IEnumerable<Process> processes_list = Process.GetProcessesByName(processToKill);
             foreach (Process x in processes_list)
             {
                 if (x.MainWindowTitle == processToKill // Kill by window Title! Works with UWP Apps!

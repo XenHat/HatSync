@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using MaxwellGPUIdle.Properties;
+using System;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace MaxwellGPUIdle
 {
     internal class Integration
     {
-        public static void AddToStartup(bool add)
+        public static void AddToStartup()
         {
             string startupFolder = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
             // Empty a few directories. Yes. If your shit is missing, this is the line that does it.
@@ -22,7 +20,7 @@ namespace MaxwellGPUIdle
                     if (shell != null)
                     {
                         File.Delete(startupFolder + "\\" + Program.ProductName + ".lnk");
-                        if (add)
+                        if (Settings.Default.AutomaticStartup)
                         {
                             dynamic startupEntry = shell.CreateShortcut(startupFolder + "\\" + Program.ProductName + ".lnk");
                             try

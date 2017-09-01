@@ -1,7 +1,6 @@
-﻿using System;
-using System.Reflection;
+﻿using MaxwellGPUIdle.Properties;
+using System;
 using System.Windows.Forms;
-using MaxwellGPUIdle.Properties;
 
 namespace MaxwellGPUIdle
 {
@@ -20,6 +19,10 @@ namespace MaxwellGPUIdle
         public ProcessIcon()
         {
             // Instantiate the NotifyIcon object.
+            if (ni != null)
+            {
+                Dispose();
+            }
             ni = new NotifyIcon();
         }
 
@@ -28,14 +31,13 @@ namespace MaxwellGPUIdle
         /// </summary>
         public void Display()
         {
-            // Put the icon in the system tray and allow it react to mouse clicks.
-            ni.MouseClick += new MouseEventHandler(ni_MouseClick);
+            // Put the icon in the system tray
             ni.Icon = Resources.MaxwellGPUIdle;
             ni.Text = "MaxwellGPUIdle";
             ni.Visible = true;
 
             // Attach a context menu.
-            //ni.ContextMenuStrip = new ContextMenus().Create();
+            ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
         }
 
         /// <summary>
@@ -45,29 +47,6 @@ namespace MaxwellGPUIdle
         {
             // When the application closes, this will remove the icon from the system tray immediately.
             ni.Dispose();
-        }
-
-        /// <summary>
-        /// Handles the MouseClick event of the ni control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">
-        /// The <see cref="System.Windows.Forms.MouseEventArgs" /> instance containing the event data.
-        /// </param>
-        private void ni_MouseClick(object sender, MouseEventArgs e)
-        {
-            MethodInfo mi = typeof(NotifyIcon).GetMethod("ShowContextMenu", BindingFlags.Instance | BindingFlags.NonPublic);
-            // Handle mouse button clicks.
-            if (e.Button == MouseButtons.Left)
-            {
-                ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
-                mi.Invoke(ni, null);
-            }
-            else if (e.Button == MouseButtons.Right)
-            {
-                ni.ContextMenuStrip = new ContextMenus().CreateOptionsMenu();
-                mi.Invoke(ni, null);
-            }
         }
     }
 }

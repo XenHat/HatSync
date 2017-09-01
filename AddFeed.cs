@@ -1,7 +1,7 @@
-﻿using System;
+﻿using MaxwellGPUIdle.Properties;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
-using MaxwellGPUIdle.Properties;
 
 namespace MaxwellGPUIdle
 {
