@@ -106,7 +106,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\About.png" />
-    <Content Include="Images\checkmark.ico" />
     <Content Include="Images\checkmark.png" />
     <Content Include="Images\Exit.png" />
     <Content Include="Images\Plus.png" />
