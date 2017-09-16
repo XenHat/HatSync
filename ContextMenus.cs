@@ -17,15 +17,7 @@ namespace MaxwellGPUIdle
         /// </summary>
         private static bool isAboutLoaded = false;
 
-        private static List<EventHandler> menu_events_handlers = new List<EventHandler>()
-        {
-            Notification_Setting_Click,
-            Startup_Click,
-            KillOnIdle_Click,
-            Set_Power_Plan_Click,
-        };
-
-        private static List<string> menu_names = new List<string>()
+        private static readonly List<string> menu_names = new List<string>()
         {
             "Notifications",
             "Run at Login",
@@ -33,12 +25,20 @@ namespace MaxwellGPUIdle
             "Auto. Power Plan",
         };
 
-        private static List<System.Drawing.Image> menu_resources = new List<System.Drawing.Image>()
+        private static readonly List<EventHandler> menu_events_handlers = new List<EventHandler>()
         {
-            Resources.checkmark,
-            Resources.checkmark,
-            Resources.checkmark,
-            Resources.checkmark,
+            Notification_Setting_Click,
+            Startup_Click,
+            KillOnIdle_Click,
+            Set_Power_Plan_Click,
+        };
+
+        private static List<bool> menu_items_enabled = new List<bool>()
+        {
+            Settings.Default.ShowNotifications,
+            Settings.Default.AutomaticStartup,
+            Settings.Default.KillOnIdle,
+            Settings.Default.ForceOnDemandPowerPlan,
         };
 
         /// <summary>
@@ -52,14 +52,6 @@ namespace MaxwellGPUIdle
             menu.ShowImageMargin = false;
             ToolStripMenuItem item;
             menu.ShowImageMargin = true;
-            // TODO: Static
-            List<bool> menu_items_enabled = new List<bool>()
-            {
-                Settings.Default.ShowNotifications,
-                Settings.Default.AutomaticStartup,
-                Settings.Default.KillOnIdle,
-                Settings.Default.ForceOnDemandPowerPlan,
-            };
 
             for (int i = 0; i < menu_names.Count; i++)
             {
@@ -69,7 +61,7 @@ namespace MaxwellGPUIdle
                 // TODO: Still need to avoid rebuilding the menu every time the menu changes
                 if (menu_items_enabled[i])
                 {
-                    watt.Image = menu_resources[i];
+                    watt.Image = Resources.checkmark;
                 }
 
                 menu.Items.Add(watt);
