@@ -62,6 +62,10 @@ namespace MaxwellGPUIdle
                     ProcessDestroyer.KillCompilerProcesses();
                 }
             }
+            if (Properties.Settings.Default.ForceOnDemandPowerPlan)
+            {
+                Integration.SetPowerPlanToOnDemand();
+            }
         }
         public static void OnTimedEvent(object sender, ElapsedEventArgs e)
         {

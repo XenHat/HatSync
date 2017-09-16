@@ -93,5 +93,17 @@ namespace MaxwellGPUIdle.Properties {
                 this["KillOnIdle"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ForceOnDemandPowerPlan {
+            get {
+                return ((bool)(this["ForceOnDemandPowerPlan"]));
+            }
+            set {
+                this["ForceOnDemandPowerPlan"] = value;
+            }
+        }
     }
 }

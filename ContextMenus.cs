@@ -22,6 +22,8 @@ namespace MaxwellGPUIdle
             Notification_Setting_Click,
             Startup_Click,
             KillOnIdle_Click,
+            Set_Power_Plan_Click,
+            /// ---
             AddExecutable,
             About_Click,
             Exit_Click
@@ -32,6 +34,8 @@ namespace MaxwellGPUIdle
             "Notifications",
             "Run at Login",
             "Kill on Idle",
+            "Auto. Power Plan",
+            /// ---
             "Add Executable",
             "About",
             "Quit"
@@ -39,9 +43,12 @@ namespace MaxwellGPUIdle
 
         private static List<System.Drawing.Image> menu_resources = new List<System.Drawing.Image>()
         {
+            // TODO: Automatically pick checkmark if not in here
             Resources.checkmark,
             Resources.checkmark,
             Resources.checkmark,
+            Resources.checkmark,
+            /// ---
             Resources.Rss,
             Resources.About,
             Resources.Exit
@@ -77,6 +84,7 @@ namespace MaxwellGPUIdle
                 Settings.Default.ShowNotifications,
                 Settings.Default.AutomaticStartup,
                 Settings.Default.KillOnIdle,
+                Settings.Default.ForceOnDemandPowerPlan,
                 true,
                 true,
                 true
@@ -207,6 +215,18 @@ namespace MaxwellGPUIdle
         private void Kill_Click(object sender, EventArgs e)
         {
             Program.DoIdleTasks();
+        }
+
+        /// <summary>
+        /// Handles the Click event of the Add Feed control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+        private static void Set_Power_Plan_Click(object sender, EventArgs e)
+        {
+            Settings.Default.ForceOnDemandPowerPlan = !Settings.Default.ForceOnDemandPowerPlan;
+            Settings.Default.Save();
+            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
         }
 
         private class MyXmlReader : XmlTextReader
