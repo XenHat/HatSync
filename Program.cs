@@ -97,8 +97,7 @@ namespace MaxwellGPUIdle
                     Stopwatch sw = Stopwatch.StartNew();
                     isTimerRunning = true;
 
-                    SettingsManager.Refresh();
-                    SettingsManager.LoadProcessesList();
+                    SettingsManager.LoadSettings();
 
                     // Make sure the application runs!
                     Application.Run();

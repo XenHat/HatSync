@@ -9,8 +9,15 @@ namespace MaxwellGPUIdle
     {
         private static bool NeedUpgrade = true;
 
-        public static void LoadProcessesList()
+        // TODO: Add a "Clear Settings" button and set NeedUpgrade to false before calling this again
+        public static void LoadSettings()
         {
+            if (NeedUpgrade)
+            {
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.Save();
+            }
+
             StringCollection known_processes_from_settings = Settings.Default.KnownGPUProcesses;
             StringCollection processes_list = new StringCollection();
             //NotificationManager.PushNotificationToOS("Loading processes list...");
@@ -54,24 +61,12 @@ namespace MaxwellGPUIdle
             NotificationManager.PushNotificationToOS("Processes that will be killed: " + processes_list_string);
         }
 
-        public static void Refresh()
-        {
-            Settings.Default.Save();
-            if (NeedUpgrade)
-            {
-                Settings.Default.Upgrade();
-                Settings.Default.Save();
-            }
-            Settings.Default.Reload();
-            NeedUpgrade = false;
-        }
-
         public static void WriteNewProcessesList(StringCollection coll)
         {
             Settings.Default.KnownGPUProcesses.Clear();
             Settings.Default.KnownGPUProcesses = coll;
-            NeedUpgrade = true;
-            Refresh();
+            Settings.Default.Save();
+            Settings.Default.Reload();
         }
     }
 }
