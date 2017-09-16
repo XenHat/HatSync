@@ -27,6 +27,10 @@ namespace MaxwellGPUIdle
                     || x.ProcessName == processToKill // Kill by app name!
                     )
                 {
+                    if (processToKill == "Dropbox" && !Properties.Settings.Default.KillDropbox)
+                    {
+                        continue;
+                    }
                     string process_with_id = processToKill + " [" + x.Id + "]";
                     try
                     {

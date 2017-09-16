@@ -17,6 +17,7 @@ namespace MaxwellGPUIdle
             Notification_Setting_Click,
             Startup_Click,
             KillOnIdle_Click,
+            KillDropbox_Click,
             Set_Power_Plan_Click,
         };
 
@@ -25,6 +26,7 @@ namespace MaxwellGPUIdle
             "Notifications",
             "Run at Login",
             "Kill on Idle",
+            "Kill Dropbox",
             "Auto. Power Plan",
         };
 
@@ -39,6 +41,7 @@ namespace MaxwellGPUIdle
             Settings.Default.ShowNotifications,
             Settings.Default.AutomaticStartup,
             Settings.Default.KillOnIdle,
+            Settings.Default.KillDropbox,
             Settings.Default.ForceOnDemandPowerPlan,
         };
 
@@ -144,6 +147,14 @@ namespace MaxwellGPUIdle
             // Quit without further ado.
             MaxwellGPUIdle.ProcessIcon.ni.Visible = false;
             Application.Exit();
+        }
+
+        private static void KillDropbox_Click(object sender, EventArgs e)
+        {
+            // TODO: Shouldn't we use the event data?
+            Settings.Default.KillDropbox = !Settings.Default.KillDropbox;
+            Settings.Default.Save();
+            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
         }
 
         /// <summary>

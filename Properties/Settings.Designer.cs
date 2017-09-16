@@ -105,5 +105,17 @@ namespace MaxwellGPUIdle.Properties {
                 this["ForceOnDemandPowerPlan"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool KillDropbox {
+            get {
+                return ((bool)(this["KillDropbox"]));
+            }
+            set {
+                this["KillDropbox"] = value;
+            }
+        }
     }
 }
