@@ -45,6 +45,11 @@ namespace MaxwellGPUIdle
             Settings.Default.ForceOnDemandPowerPlan,
         };
 
+        public static void RegenerateMenu()
+        {
+            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
+        }
+
         /// <summary>
         /// Creates this instance.
         /// </summary>
@@ -154,7 +159,7 @@ namespace MaxwellGPUIdle
             // TODO: Shouldn't we use the event data?
             Settings.Default.KillDropbox = !Settings.Default.KillDropbox;
             Settings.Default.Save();
-            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
+            RegenerateMenu();
         }
 
         /// <summary>
@@ -167,7 +172,7 @@ namespace MaxwellGPUIdle
             // TODO: Shouldn't we use the event data?
             Settings.Default.KillOnIdle = !Settings.Default.KillOnIdle;
             Settings.Default.Save();
-            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
+            RegenerateMenu();
         }
 
         /// <summary>
@@ -180,7 +185,7 @@ namespace MaxwellGPUIdle
             // Flipping here can cause bugs, be more explicit so that the value is always right.
             Settings.Default.ShowNotifications = !Settings.Default.ShowNotifications;
             Settings.Default.Save();
-            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
+            RegenerateMenu();
         }
 
         /// <summary>
@@ -192,7 +197,7 @@ namespace MaxwellGPUIdle
         {
             Settings.Default.ForceOnDemandPowerPlan = !Settings.Default.ForceOnDemandPowerPlan;
             Settings.Default.Save();
-            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
+            RegenerateMenu();
         }
 
         /// <summary>
@@ -204,7 +209,7 @@ namespace MaxwellGPUIdle
         {
             Settings.Default.AutomaticStartup = !Settings.Default.AutomaticStartup;
             Settings.Default.Save();
-            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
+            RegenerateMenu();
             Integration.AddToStartup();
         }
 

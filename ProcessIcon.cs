@@ -38,7 +38,7 @@ namespace MaxwellGPUIdle
             ni.Visible = true;
 
             // Attach a context menu.
-            ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
+            ContextMenus.RegenerateMenu();
         }
 
         /// <summary>
