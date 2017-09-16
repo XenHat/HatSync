@@ -9,7 +9,7 @@ namespace MaxwellGPUIdle
     internal class ProcessIcon : IDisposable
     {
         /// <summary>
-        /// The NotifyIcon object.
+        /// Static instance of the Tray Icon
         /// </summary>
         public static NotifyIcon ni;
 
@@ -18,6 +18,7 @@ namespace MaxwellGPUIdle
         /// </summary>
         public ProcessIcon()
         {
+            // TODO: Never regenerate a new process icon, simply re-assign a new menu to it
             // Instantiate the NotifyIcon object.
             if (ni != null)
             {
