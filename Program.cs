@@ -47,7 +47,7 @@ namespace MaxwellGPUIdle
         {
             if (Properties.Settings.Default.KillOnIdle)
             {
-                // NOTE: I would prefer to check the process' CPU usage but this appears to be
+                // NOTE: I would prefer to check the process' GPU usage but this appears to be
                 //       difficult to obtain.
                 //if (CPUStats.currentCPUUsage < 30.0)
                 {
