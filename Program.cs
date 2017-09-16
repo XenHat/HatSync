@@ -43,14 +43,6 @@ namespace MaxwellGPUIdle
         public static bool isTimerRunning = false;
         public static string ProductName = ((AssemblyProductAttribute)Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), true)[0]).Product;
 
-        public static void ExceptionHandler(Exception exception)
-        {
-            // Meep.
-            System.Windows.Forms.MessageBox.Show(
-                exception.ToString(), ":( Sortahandled Exception! - " + ((AssemblyProductAttribute)Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), true)[0]).Product.ToString(),
-                System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-        }
-
         public static void DoIdleTasks()
         {
             if (Properties.Settings.Default.KillOnIdle)
@@ -67,6 +59,15 @@ namespace MaxwellGPUIdle
                 Integration.SetPowerPlanToOnDemand();
             }
         }
+
+        public static void ExceptionHandler(Exception exception)
+        {
+            // Meep.
+            System.Windows.Forms.MessageBox.Show(
+                exception.ToString(), ":( Sortahandled Exception! - " + ((AssemblyProductAttribute)Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), true)[0]).Product.ToString(),
+                System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+        }
+
         public static void OnTimedEvent(object sender, ElapsedEventArgs e)
         {
             DoIdleTasks();

@@ -8,6 +8,13 @@ namespace MaxwellGPUIdle
 {
     internal class Integration
     {
+        private static readonly ProcessStartInfo PowerCfgStartInfo = new ProcessStartInfo
+        {
+            FileName = "powercfg.exe",
+            Arguments = "-setactive 381b4222-f694-41f0-9685-ff5bb260df2e",
+            CreateNoWindow = true
+        };
+
         public static void AddToStartup()
         {
             string startupFolder = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
@@ -48,15 +55,9 @@ namespace MaxwellGPUIdle
             }
             //LogStats();
         }
-        private static readonly ProcessStartInfo PowerCfgStartInfo = new ProcessStartInfo
-        {
-            FileName = "powercfg.exe",
-            Arguments = "-setactive 381b4222-f694-41f0-9685-ff5bb260df2e",
-            CreateNoWindow = true
-        };
+
         public static void SetPowerPlanToOnDemand()
         {
-
             Process powercfgProcess = new Process
             {
                 StartInfo = PowerCfgStartInfo

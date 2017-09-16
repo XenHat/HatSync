@@ -12,10 +12,13 @@ namespace MaxwellGPUIdle
     /// </summary>
     internal class ContextMenus
     {
-        /// <summary>
-        /// Is the About box displayed?
-        /// </summary>
-        private static bool isAboutLoaded = false;
+        private static readonly List<EventHandler> menu_events_handlers = new List<EventHandler>()
+        {
+            Notification_Setting_Click,
+            Startup_Click,
+            KillOnIdle_Click,
+            Set_Power_Plan_Click,
+        };
 
         private static readonly List<string> menu_names = new List<string>()
         {
@@ -25,13 +28,10 @@ namespace MaxwellGPUIdle
             "Auto. Power Plan",
         };
 
-        private static readonly List<EventHandler> menu_events_handlers = new List<EventHandler>()
-        {
-            Notification_Setting_Click,
-            Startup_Click,
-            KillOnIdle_Click,
-            Set_Power_Plan_Click,
-        };
+        /// <summary>
+        /// Is the About box displayed?
+        /// </summary>
+        private static bool isAboutLoaded = false;
 
         private static List<bool> menu_items_enabled = new List<bool>()
         {
@@ -103,8 +103,7 @@ namespace MaxwellGPUIdle
             };
             item.Click += delegate (object sender, EventArgs e) { Exit_Click(sender, e); };
             menu.Items.Add(item);
-            /// end
-            /// ----------------------------------------------------------------------------------
+            /// end ----------------------------------------------------------------------------------
 
             return menu;
         }
@@ -173,6 +172,18 @@ namespace MaxwellGPUIdle
         }
 
         /// <summary>
+        /// Handles the Click event of the Add Feed control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+        private static void Set_Power_Plan_Click(object sender, EventArgs e)
+        {
+            Settings.Default.ForceOnDemandPowerPlan = !Settings.Default.ForceOnDemandPowerPlan;
+            Settings.Default.Save();
+            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
+        }
+
+        /// <summary>
         /// Handles the Click event of the Startup control.
         /// </summary>
         /// <param name="sender">The sender.</param>
@@ -215,18 +226,6 @@ namespace MaxwellGPUIdle
         private void Kill_Click(object sender, EventArgs e)
         {
             Program.DoIdleTasks();
-        }
-
-        /// <summary>
-        /// Handles the Click event of the Add Feed control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
-        private static void Set_Power_Plan_Click(object sender, EventArgs e)
-        {
-            Settings.Default.ForceOnDemandPowerPlan = !Settings.Default.ForceOnDemandPowerPlan;
-            Settings.Default.Save();
-            MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
         }
 
         private class MyXmlReader : XmlTextReader
