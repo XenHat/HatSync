@@ -33,7 +33,8 @@ namespace MaxwellGPUIdle
         /// </summary>
         private static bool isAboutLoaded = false;
 
-        private static List<bool> menu_items_enabled = new List<bool>()
+        // Note: Cannot be static or runtime value won't change
+        private List<bool> menu_items_enabled = new List<bool>()
         {
             Settings.Default.ShowNotifications,
             Settings.Default.AutomaticStartup,
