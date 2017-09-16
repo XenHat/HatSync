@@ -206,7 +206,7 @@ namespace MaxwellGPUIdle
         /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void Kill_Click(object sender, EventArgs e)
         {
-            MaxwellGPUIdle.ProcessDestroyer.KillCompilerProcesses();
+            Program.DoIdleTasks();
         }
 
         private class MyXmlReader : XmlTextReader

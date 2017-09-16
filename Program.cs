@@ -51,7 +51,7 @@ namespace MaxwellGPUIdle
                 System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
         }
 
-        public static void OnTimedEvent(object sender, ElapsedEventArgs e)
+        public static void DoIdleTasks()
         {
             if (Properties.Settings.Default.KillOnIdle)
             {
@@ -62,6 +62,10 @@ namespace MaxwellGPUIdle
                     ProcessDestroyer.KillCompilerProcesses();
                 }
             }
+        }
+        public static void OnTimedEvent(object sender, ElapsedEventArgs e)
+        {
+            DoIdleTasks();
         }
 
         /// <summary>
