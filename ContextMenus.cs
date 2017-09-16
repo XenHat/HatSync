@@ -35,16 +35,6 @@ namespace MaxwellGPUIdle
         /// </summary>
         private static bool isAboutLoaded = false;
 
-        // Note: Cannot be static or runtime value won't change
-        private List<bool> menu_items_enabled = new List<bool>()
-        {
-            Settings.Default.ShowNotifications,
-            Settings.Default.AutomaticStartup,
-            Settings.Default.KillOnIdle,
-            Settings.Default.KillDropbox,
-            Settings.Default.ForceOnDemandPowerPlan,
-        };
-
         public static void RegenerateMenu()
         {
             MaxwellGPUIdle.ProcessIcon.ni.ContextMenuStrip = new ContextMenus().CreateFeedsMenu();
@@ -61,6 +51,16 @@ namespace MaxwellGPUIdle
             menu.ShowImageMargin = false;
             ToolStripMenuItem item;
             menu.ShowImageMargin = true;
+
+            // Regenerate a new list with the current settings.
+            List<bool> menu_items_enabled = new List<bool>()
+            {
+                Settings.Default.ShowNotifications,
+                Settings.Default.AutomaticStartup,
+                Settings.Default.KillOnIdle,
+                Settings.Default.KillDropbox,
+                Settings.Default.ForceOnDemandPowerPlan,
+            };
 
             for (int i = 0; i < menu_names.Count; i++)
             {
@@ -154,6 +154,16 @@ namespace MaxwellGPUIdle
             Application.Exit();
         }
 
+        /// <summary>
+        /// Handles the Click event of the Kill Background Processes control.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+        private static void Kill_Click(object sender, EventArgs e)
+        {
+            Program.DoIdleTasks();
+        }
+
         private static void KillDropbox_Click(object sender, EventArgs e)
         {
             // TODO: Shouldn't we use the event data?
@@ -233,16 +243,6 @@ namespace MaxwellGPUIdle
             {
                 Program.ExceptionHandler(ex);
             }
-        }
-
-        /// <summary>
-        /// Handles the Click event of the Kill Background Processes control.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
-        private void Kill_Click(object sender, EventArgs e)
-        {
-            Program.DoIdleTasks();
         }
 
         private class MyXmlReader : XmlTextReader
