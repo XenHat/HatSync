@@ -126,7 +126,7 @@ namespace MaxwellGPUIdle
             public static void ConsumeCPU()
             {
                 int percentage = 60;
-                if (percentage < 0 || percentage > 100)
+                if (percentage < 0 || percentage > 100) //-V3022
                     throw new ArgumentException("percentage");
                 Stopwatch watch = new Stopwatch();
                 watch.Start();
