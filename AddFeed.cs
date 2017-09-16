@@ -33,7 +33,7 @@ namespace MaxwellGPUIdle
                 {
                     Settings.Default.KnownGPUProcesses.Add(potential_url);
                     Settings.Default.Save();
-                    ContextMenus.RegenerateMenu();
+                    MenuGenerator.ContextMenus.RegenerateMenu();
                     this.Close();
                 }
             }

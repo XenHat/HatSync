@@ -12,9 +12,9 @@ namespace MaxwellGPUIdle
             {
                 title = Program.ProductName;
             }
-            ProcessIcon.ni.BalloonTipTitle = title;
-            ProcessIcon.ni.BalloonTipText = content;
-            ProcessIcon.ni.ShowBalloonTip(1);
+            Program.sTrayIcon.BalloonTipTitle = title;
+            Program.sTrayIcon.BalloonTipText = content;
+            Program.sTrayIcon.ShowBalloonTip(1);
         }
     }
 }

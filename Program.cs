@@ -1,4 +1,5 @@
 ﻿// Based on https://www.codeproject.com/Articles/290013/Formless-System-Tray-Application
+using MaxwellGPUIdle.Properties;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -39,9 +40,14 @@ namespace MaxwellGPUIdle
 
     internal static class Program
     {
-        public static ProcessIcon currentIconInstance = new ProcessIcon();
         public static bool isTimerRunning = false;
+
         public static string ProductName = ((AssemblyProductAttribute)Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), true)[0]).Product;
+
+        /// <summary>
+        /// Static instance of the Tray Icon
+        /// </summary>
+        public static NotifyIcon sTrayIcon = new NotifyIcon();
 
         public static void DoIdleTasks()
         {
@@ -87,8 +93,7 @@ namespace MaxwellGPUIdle
                 {
                     // Show the system tray icon.
                     Application.EnableVisualStyles();
-                    Application.SetCompatibleTextRenderingDefault(true);
-                    currentIconInstance.Display();
+                    //Application.SetCompatibleTextRenderingDefault(true);
 
                     System.Timers.Timer aTimer = new System.Timers.Timer();
                     aTimer.Elapsed += Program.OnTimedEvent;
@@ -98,6 +103,14 @@ namespace MaxwellGPUIdle
                     isTimerRunning = true;
 
                     SettingsManager.LoadSettings();
+
+                    // Put the icon in the system tray
+                    sTrayIcon.Icon = Resources.MaxwellGPUIdle;
+                    sTrayIcon.Text = "MaxwellGPUIdle";
+                    sTrayIcon.Visible = true;
+
+                    // Attach a context menu.
+                    MenuGenerator.ContextMenus.RegenerateMenu();
 
                     // Make sure the application runs!
                     Application.Run();
