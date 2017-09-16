@@ -23,10 +23,6 @@ namespace MaxwellGPUIdle
             Startup_Click,
             KillOnIdle_Click,
             Set_Power_Plan_Click,
-            /// ---
-            AddExecutable,
-            About_Click,
-            Exit_Click
         };
 
         private static List<string> menu_names = new List<string>()
@@ -35,23 +31,14 @@ namespace MaxwellGPUIdle
             "Run at Login",
             "Kill on Idle",
             "Auto. Power Plan",
-            /// ---
-            "Add Executable",
-            "About",
-            "Quit"
         };
 
         private static List<System.Drawing.Image> menu_resources = new List<System.Drawing.Image>()
         {
-            // TODO: Automatically pick checkmark if not in here
             Resources.checkmark,
             Resources.checkmark,
             Resources.checkmark,
             Resources.checkmark,
-            /// ---
-            Resources.Rss,
-            Resources.About,
-            Resources.Exit
         };
 
         /// <summary>
@@ -64,30 +51,14 @@ namespace MaxwellGPUIdle
             ContextMenuStrip menu = new ContextMenuStrip();
             menu.ShowImageMargin = false;
             ToolStripMenuItem item;
-
-            // Add one entry to this menu to kill everything
-            item = new ToolStripMenuItem
-            {
-                Text = "Force Idle Now!",
-            };
-            item.Click += delegate (object sender, EventArgs e) { Kill_Click(sender, e); };
-            menu.Items.Add(item); // Add menu entry with the feed name
-            menu.Items.Add(new ToolStripSeparator()); // Separator.
-
-            // huge test
-
             menu.ShowImageMargin = true;
             // TODO: Static
-
             List<bool> menu_items_enabled = new List<bool>()
             {
                 Settings.Default.ShowNotifications,
                 Settings.Default.AutomaticStartup,
                 Settings.Default.KillOnIdle,
                 Settings.Default.ForceOnDemandPowerPlan,
-                true,
-                true,
-                true
             };
 
             for (int i = 0; i < menu_names.Count; i++)
@@ -104,7 +75,44 @@ namespace MaxwellGPUIdle
                 menu.Items.Add(watt);
             };
 
-            // end
+            /// ----------------------------------------------------------------------------------
+            /// Always present or static menu items
+            menu.Items.Add(new ToolStripSeparator()); // Separator.
+
+            // Add one entry to this menu to kill everything
+            item = new ToolStripMenuItem
+            {
+                Text = "Force Idle Now!",
+                Image = Resources.Rss
+            };
+            item.Click += delegate (object sender, EventArgs e) { Kill_Click(sender, e); };
+            menu.Items.Add(item);
+
+            item = new ToolStripMenuItem
+            {
+                Text = "Add Executable",
+                Image = Resources.Plus
+            };
+            item.Click += delegate (object sender, EventArgs e) { AddExecutable(sender, e); };
+            menu.Items.Add(item);
+
+            item = new ToolStripMenuItem
+            {
+                Text = "About",
+                Image = Resources.About
+            };
+            item.Click += delegate (object sender, EventArgs e) { About_Click(sender, e); };
+            menu.Items.Add(item);
+
+            item = new ToolStripMenuItem
+            {
+                Text = "Exit",
+                Image = Resources.Exit
+            };
+            item.Click += delegate (object sender, EventArgs e) { Exit_Click(sender, e); };
+            menu.Items.Add(item);
+            /// end
+            /// ----------------------------------------------------------------------------------
 
             return menu;
         }
