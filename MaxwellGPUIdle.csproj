@@ -109,7 +109,6 @@
     <Content Include="Images\checkmark.ico" />
     <Content Include="Images\checkmark.png" />
     <Content Include="Images\Exit.png" />
-    <Content Include="Images\Explorer.png" />
     <Content Include="Images\Plus.png" />
     <Content Include="Images\rss_icon.png" />
     <Content Include="Images\rss_icon.ico" />
