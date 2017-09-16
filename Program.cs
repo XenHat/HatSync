@@ -1,5 +1,4 @@
 ﻿// Based on https://www.codeproject.com/Articles/290013/Formless-System-Tray-Application
-using MaxwellGPUIdle.Properties;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,7 +7,7 @@ using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
 
-namespace MaxwellGPUIdle
+namespace GPUIdleHelper
 {
     internal static class Helper
     {
@@ -51,7 +50,7 @@ namespace MaxwellGPUIdle
 
         public static void DoIdleTasks()
         {
-            if (Properties.Settings.Default.KillOnIdle)
+            if (MainApplication.Properties.Settings.Default.KillOnIdle)
             {
                 // NOTE: I would prefer to check the process' GPU usage but this appears to be
                 //       difficult to obtain.
@@ -60,7 +59,7 @@ namespace MaxwellGPUIdle
                     ProcessDestroyer.KillCompilerProcesses();
                 }
             }
-            if (Properties.Settings.Default.ForceOnDemandPowerPlan)
+            if (MainApplication.Properties.Settings.Default.ForceOnDemandPowerPlan)
             {
                 Integration.SetPowerPlanToOnDemand();
             }
@@ -105,8 +104,8 @@ namespace MaxwellGPUIdle
                     SettingsManager.LoadSettings();
 
                     // Put the icon in the system tray
-                    sTrayIcon.Icon = Resources.MaxwellGPUIdle;
-                    sTrayIcon.Text = "MaxwellGPUIdle";
+                    sTrayIcon.Icon = MainApplication.Properties.Resources.GPUIdleHelper;
+                    sTrayIcon.Text = "GPUIdleHelper";
                     sTrayIcon.Visible = true;
 
                     // Attach a context menu.

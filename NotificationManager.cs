@@ -1,10 +1,10 @@
-namespace MaxwellGPUIdle
+namespace GPUIdleHelper
 {
     public class NotificationManager
     {
         public static void PushNotificationToOS(string content, string title = "")
         {
-            if (!Properties.Settings.Default.ShowNotifications)
+            if (!MainApplication.Properties.Settings.Default.ShowNotifications)
             {
                 return;
             }

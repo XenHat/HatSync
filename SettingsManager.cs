@@ -1,9 +1,8 @@
-using MaxwellGPUIdle.Properties;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 
-namespace MaxwellGPUIdle
+namespace GPUIdleHelper
 {
     public class SettingsManager
     {
@@ -14,11 +13,11 @@ namespace MaxwellGPUIdle
         {
             if (NeedUpgrade)
             {
-                Properties.Settings.Default.Upgrade();
-                Properties.Settings.Default.Save();
+                MainApplication.Properties.Settings.Default.Upgrade();
+                MainApplication.Properties.Settings.Default.Save();
             }
 
-            StringCollection known_processes_from_settings = Settings.Default.KnownGPUProcesses;
+            StringCollection known_processes_from_settings = MainApplication.Properties.Settings.Default.KnownGPUProcesses;
             StringCollection processes_list = new StringCollection();
             //NotificationManager.PushNotificationToOS("Loading processes list...");
 
@@ -63,10 +62,10 @@ namespace MaxwellGPUIdle
 
         public static void WriteNewProcessesList(StringCollection coll)
         {
-            Settings.Default.KnownGPUProcesses.Clear();
-            Settings.Default.KnownGPUProcesses = coll;
-            Settings.Default.Save();
-            Settings.Default.Reload();
+            MainApplication.Properties.Settings.Default.KnownGPUProcesses.Clear();
+            MainApplication.Properties.Settings.Default.KnownGPUProcesses = coll;
+            MainApplication.Properties.Settings.Default.Save();
+            MainApplication.Properties.Settings.Default.Reload();
         }
     }
 }

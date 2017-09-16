@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Windows.Forms;
 
-namespace MaxwellGPUIdle
+namespace GPUIdleHelper
 {
     public class ProcessDestroyer
     {
@@ -9,7 +9,7 @@ namespace MaxwellGPUIdle
         {
             // TODO: Move to idle loop
             //compiler_processes = Helper.Convert(Properties.Settings.Default.KnownGPUProcesses);
-            foreach (string process_name in Properties.Settings.Default.KnownGPUProcesses)
+            foreach (string process_name in MainApplication.Properties.Settings.Default.KnownGPUProcesses)
             {
                 KillProcessByName(process_name);
             }
@@ -27,7 +27,7 @@ namespace MaxwellGPUIdle
                     || x.ProcessName == processToKill // Kill by app name!
                     )
                 {
-                    if (processToKill == "Dropbox" && !Properties.Settings.Default.KillDropbox)
+                    if (processToKill == "Dropbox" && !MainApplication.Properties.Settings.Default.KillDropbox)
                     {
                         continue;
                     }

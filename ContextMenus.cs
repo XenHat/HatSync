@@ -1,12 +1,11 @@
-﻿using MaxwellGPUIdle.Properties;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 
-namespace MaxwellGPUIdle
+namespace GPUIdleHelper
 {
     public class TrackedToolStripMenuItem
     {
@@ -91,11 +90,11 @@ namespace MaxwellGPUIdle
                 // Regenerate a new list with the current settings.
                 List<bool> menu_items_enabled = new List<bool>()
                 {
-                    Settings.Default.ShowNotifications,
-                    Settings.Default.AutomaticStartup,
-                    Settings.Default.KillOnIdle,
-                    Settings.Default.KillDropbox,
-                    Settings.Default.ForceOnDemandPowerPlan,
+                    MainApplication.Properties.Settings.Default.ShowNotifications,
+                    MainApplication.Properties.Settings.Default.AutomaticStartup,
+                    MainApplication.Properties.Settings.Default.KillOnIdle,
+                    MainApplication.Properties.Settings.Default.KillDropbox,
+                    MainApplication.Properties.Settings.Default.ForceOnDemandPowerPlan,
                 };
 
                 for (int i = 0; i < menu_names.Count; i++)
@@ -107,7 +106,7 @@ namespace MaxwellGPUIdle
                     // TODO: Still need to avoid rebuilding the menu every time the menu changes
                     if (menu_items_enabled[i])
                     {
-                        LoopItem.Image = Resources.checkmark;
+                        LoopItem.Image = MainApplication.Properties.Resources.checkmark;
                     }
 
                     Program.sTrayIcon.ContextMenuStrip.Items.Add(LoopItem);
@@ -123,26 +122,26 @@ namespace MaxwellGPUIdle
                 // Add one entry to this menu to kill everything
                 var item = new TrackedToolStripMenuItem();
                 item.Value.Text = "Force Idle Now!";
-                item.Value.Image = Resources.Rss;
+                item.Value.Image = MainApplication.Properties.Resources.Rss;
                 item.Value.Click += delegate (object sender, EventArgs e) { Kill_Click(sender, e); };
 
                 Program.sTrayIcon.ContextMenuStrip.Items.Add(item.Value);
 
                 item = new TrackedToolStripMenuItem();
                 item.Value.Text = "Add Executable";
-                item.Value.Image = Resources.Plus;
+                item.Value.Image = MainApplication.Properties.Resources.Plus;
                 item.Value.Click += delegate (object sender, EventArgs e) { AddExecutable(sender, e); };
                 Program.sTrayIcon.ContextMenuStrip.Items.Add(item.Value);
 
                 item = new TrackedToolStripMenuItem();
                 item.Value.Text = "About";
-                item.Value.Image = Resources.About;
+                item.Value.Image = MainApplication.Properties.Resources.About;
                 item.Value.Click += delegate (object sender, EventArgs e) { About_Click(sender, e); };
                 Program.sTrayIcon.ContextMenuStrip.Items.Add(item.Value);
 
                 item = new TrackedToolStripMenuItem();
                 item.Value.Text = "Exit";
-                item.Value.Image = Resources.Exit;
+                item.Value.Image = MainApplication.Properties.Resources.Exit;
                 item.Value.Click += delegate (object sender, EventArgs e) { Exit_Click(sender, e); };
                 Program.sTrayIcon.ContextMenuStrip.Items.Add(item.Value);
                 /// end ----------------------------------------------------------------------------------
@@ -243,8 +242,8 @@ namespace MaxwellGPUIdle
             private static void KillDropbox_Click(object sender, EventArgs e)
             {
                 // TODO: Shouldn't we use the event data?
-                Settings.Default.KillDropbox = !Settings.Default.KillDropbox;
-                Settings.Default.Save();
+                MainApplication.Properties.Settings.Default.KillDropbox = !MainApplication.Properties.Settings.Default.KillDropbox;
+                MainApplication.Properties.Settings.Default.Save();
                 RegenerateMenu();
             }
 
@@ -258,8 +257,8 @@ namespace MaxwellGPUIdle
             private static void KillOnIdle_Click(object sender, EventArgs e)
             {
                 // TODO: Shouldn't we use the event data?
-                Settings.Default.KillOnIdle = !Settings.Default.KillOnIdle;
-                Settings.Default.Save();
+                MainApplication.Properties.Settings.Default.KillOnIdle = !MainApplication.Properties.Settings.Default.KillOnIdle;
+                MainApplication.Properties.Settings.Default.Save();
                 RegenerateMenu();
             }
 
@@ -273,8 +272,8 @@ namespace MaxwellGPUIdle
             private static void Notification_Setting_Click(object sender, EventArgs e)
             {
                 // Flipping here can cause bugs, be more explicit so that the value is always right.
-                Settings.Default.ShowNotifications = !Settings.Default.ShowNotifications;
-                Settings.Default.Save();
+                MainApplication.Properties.Settings.Default.ShowNotifications = !MainApplication.Properties.Settings.Default.ShowNotifications;
+                MainApplication.Properties.Settings.Default.Save();
                 RegenerateMenu();
             }
 
@@ -287,8 +286,8 @@ namespace MaxwellGPUIdle
             /// </param>
             private static void Set_Power_Plan_Click(object sender, EventArgs e)
             {
-                Settings.Default.ForceOnDemandPowerPlan = !Settings.Default.ForceOnDemandPowerPlan;
-                Settings.Default.Save();
+                MainApplication.Properties.Settings.Default.ForceOnDemandPowerPlan = !MainApplication.Properties.Settings.Default.ForceOnDemandPowerPlan;
+                MainApplication.Properties.Settings.Default.Save();
                 RegenerateMenu();
             }
 
@@ -301,8 +300,8 @@ namespace MaxwellGPUIdle
             /// </param>
             private static void Startup_Click(object sender, EventArgs e)
             {
-                Settings.Default.AutomaticStartup = !Settings.Default.AutomaticStartup;
-                Settings.Default.Save();
+                MainApplication.Properties.Settings.Default.AutomaticStartup = !MainApplication.Properties.Settings.Default.AutomaticStartup;
+                MainApplication.Properties.Settings.Default.Save();
                 RegenerateMenu();
                 Integration.AddToStartup();
             }

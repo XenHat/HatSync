@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace MaxwellGPUIdle
+namespace GPUIdleHelper
 {
     partial class AboutBox : Form
     {

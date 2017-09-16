@@ -1,9 +1,8 @@
-﻿using MaxwellGPUIdle.Properties;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace MaxwellGPUIdle
+namespace GPUIdleHelper
 {
     public partial class AddFeed : Form
     {
@@ -31,8 +30,8 @@ namespace MaxwellGPUIdle
                 var potential_url = this.currentURLInput;
                 if (Helper.ValidateExecutableName(potential_url))
                 {
-                    Settings.Default.KnownGPUProcesses.Add(potential_url);
-                    Settings.Default.Save();
+                    MainApplication.Properties.Settings.Default.KnownGPUProcesses.Add(potential_url);
+                    MainApplication.Properties.Settings.Default.Save();
                     MenuGenerator.ContextMenus.RegenerateMenu();
                     this.Close();
                 }

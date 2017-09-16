@@ -1,4 +1,4 @@
-﻿namespace MaxwellGPUIdle
+﻿namespace GPUIdleHelper
 {
     partial class AddFeed
     {

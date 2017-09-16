@@ -1,10 +1,9 @@
-﻿using MaxwellGPUIdle.Properties;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace MaxwellGPUIdle
+namespace GPUIdleHelper
 {
     internal class Integration
     {
@@ -28,7 +27,7 @@ namespace MaxwellGPUIdle
                     if (shell != null)
                     {
                         File.Delete(startupFolder + "\\" + Program.ProductName + ".lnk");
-                        if (Settings.Default.AutomaticStartup)
+                        if (MainApplication.Properties.Settings.Default.AutomaticStartup)
                         {
                             dynamic startupEntry = shell.CreateShortcut(startupFolder + "\\" + Program.ProductName + ".lnk");
                             try
