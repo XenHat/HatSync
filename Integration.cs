@@ -26,13 +26,14 @@ namespace GPUIdleHelper
                 {
                     if (shell != null)
                     {
-                        File.Delete(startupFolder + "\\" + Program.ProductName + ".lnk");
+                        string LinkName = startupFolder + "\\" + Program.ProductName + ".lnk";
+                        File.Delete(LinkName);
                         if (MainApplication.Properties.Settings.Default.AutomaticStartup)
                         {
-                            dynamic startupEntry = shell.CreateShortcut(startupFolder + "\\" + Program.ProductName + ".lnk");
+                            dynamic startupEntry = shell.CreateShortcut(LinkName);
                             try
                             {
-                                var currentPathToExe = Directory.GetCurrentDirectory() + "\\" + Program.ProductName + ".exe";
+                                var currentPathToExe = System.Reflection.Assembly.GetExecutingAssembly().Location;
                                 startupEntry.TargetPath = currentPathToExe;
                                 startupEntry.IconLocation = currentPathToExe;
                                 startupEntry.Save();
