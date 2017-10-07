@@ -34,6 +34,7 @@ namespace MainApplication.Properties {
   <string>Dropbox</string>
   <string>Calculator</string>
   <string>Films &amp; TV</string>
+  <string>NVIDIA Share</string>
   <string>Store</string>
   <string>Xbox</string>
 </ArrayOfString>")]
