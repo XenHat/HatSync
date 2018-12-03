@@ -318,9 +318,7 @@
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
     <Compile Include="Benchmark.cs" />
-    <Compile Include="CPUStats.cs" />
     <Compile Include="Enumerator.cs" />
-    <Compile Include="NetworkUtilities.cs" />
     <Compile Include="SimpleHasher.cs" />
     <Compile Include="EmailSender.cs" />
     <Compile Include="IPUpdater.cs" />
