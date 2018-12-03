@@ -49,7 +49,7 @@ namespace HatSync
             return files;
         }
 
-
+        /*
         public static IEnumerable<KeyValuePair<DirectoryInfo, List<FileSystemInfo>>> GetFileSystemInfosRecursive(
             DirectoryInfo dir, bool depthFirst)
         {
@@ -108,6 +108,6 @@ namespace HatSync
                     }
                 }
             }
-        }
+        }*/
     }
 }
