@@ -25,18 +25,6 @@ namespace HatSync
         {
             return new System.Collections.Generic.HashSet<System.Net.IPAddress> { CachedExternalIpAddressv4, CachedExternalIpAddressv6 };
         }
-
-        internal static void PrepareIPsForUpdate()
-        {
-            if (CachedExternalIpAddressv4 != null)
-            {
-                PreviousExternalIpAddressv4 = CachedExternalIpAddressv4;
-            }
-            if (CachedExternalIpAddressv6 != null)
-            {
-                PreviousExternalIpAddressv6 = CachedExternalIpAddressv6;
-            }
-        }
     }
 
     internal class IpUpdater
