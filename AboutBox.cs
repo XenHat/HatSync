@@ -1,6 +1,6 @@
 ﻿namespace HatSync
 {
-    internal sealed partial class AboutBox : System.Windows.Forms.Form
+    internal sealed class AboutBox : System.Windows.Forms.Form
     {
         public AboutBox()
         {
