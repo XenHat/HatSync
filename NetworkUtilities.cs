@@ -32,6 +32,8 @@ public static partial class NetworkUtilities
             {
                 case System.Net.Sockets.AddressFamily.InterNetwork:
                     return address;
+                default:
+                    return null;
             }
         }
         return null;
@@ -46,6 +48,8 @@ public static partial class NetworkUtilities
             {
                 case System.Net.Sockets.AddressFamily.InterNetworkV6:
                     return address;
+                default:
+                    return null;
             }
         }
         return null;
