@@ -55,7 +55,6 @@ namespace HatSync
 
         private readonly byte[] _hash;
 
-        // These are the values contained in our
         private readonly string _name;
     }
 
