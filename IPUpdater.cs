@@ -313,39 +313,6 @@ namespace HatSync
         private static System.Collections.Generic.HashSet<IPAddress> GetNewUpsFromLocalAdapters()
         {
             System.Collections.Generic.HashSet<System.Net.IPAddress> returnValue = new System.Collections.Generic.HashSet<System.Net.IPAddress>();
-#if REQUIRE_INTERNET
-            try
-            {
-                // IPV4
-                using (var socket = new System.Net.Sockets.Socket(System.Net.Sockets.AddressFamily.InterNetwork, System.Net.Sockets.SocketType.Dgram, 0))
-                {
-                    // Connect socket to Google's Public DNS service
-                    socket.Connect("8.8.8.8", 65530);
-                    if (!(socket.LocalEndPoint is IPEndPoint endPoint))
-                    {
-                        throw new System.InvalidOperationException($"Error occurred casting {socket.LocalEndPoint} to IPEndPoint");
-                    }
-                    returnValue.Add(endPoint.Address);
-                }
-                // IPV6
-                using (var socket = new System.Net.Sockets.Socket(System.Net.Sockets.AddressFamily.InterNetworkV6, System.Net.Sockets.SocketType.Dgram, 0))
-                {
-                    // Connect socket to Google's Public DNS service
-                    socket.Connect("2001:4860:4860::8888", 65530);
-                    if (!(socket.LocalEndPoint is IPEndPoint endPoint))
-                    {
-                        throw new System.InvalidOperationException($"Error occurred casting {socket.LocalEndPoint} to IPEndPoint");
-                    }
-                    returnValue.Add(endPoint.Address);
-                }
-            }
-            catch (System.Net.Sockets.SocketException ex)
-            {
-                // Handle exception
-                Log.WriteLine(ex.ToString());
-            }
-
-#else
             try
             {
                 // Get 'IPHostEntry' object containing information like host name, IP addresses, aliases for a host.
@@ -379,7 +346,6 @@ namespace HatSync
                 Log.WriteLine("Source : " + e.Source);
                 Log.WriteLine("Message : " + e.Message);
             }
-#endif
             return returnValue;
         }
 
