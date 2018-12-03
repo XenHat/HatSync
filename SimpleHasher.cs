@@ -154,7 +154,7 @@ namespace HatSync
             }
 
             Log.WriteLine("Finished hashing " + folder);
-            GC.Collect();
+            //GC.Collect();
 
             return files;
         }
