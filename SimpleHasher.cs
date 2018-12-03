@@ -58,19 +58,6 @@ namespace HatSync
         private readonly string _name;
     }
 
-    internal class CompareHashingMethods
-    {
-        //[Benchmark]
-        protected static void Main()
-        {
-            Log.WriteLine("Running Hashing benchmark");
-            SimpleHasher.DoHashFileDirect(@"C:\test\blob1");
-            Log.WriteLine("Done.");
-        }
-
-        private const string File = @"C:\test\blob1";
-    }
-
     internal static class SimpleHasher
     {
         public static string ByteArrayToString(byte[] ba)
