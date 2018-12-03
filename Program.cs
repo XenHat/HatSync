@@ -50,6 +50,7 @@ namespace HatSync
     {
         internal static void WriteLine(string input)
         {
+            // Do nothing because logging is only working in debug mode
 #if DEBUG
             System.Console.WriteLine(input);
 #endif
