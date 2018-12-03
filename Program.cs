@@ -101,6 +101,7 @@ namespace HatSync
             // Will be used later however.
         }
 
+#if DEBUG
         // TODO: Use?
         private static void ExceptionHandler(System.Exception exception)
         {
@@ -108,7 +109,7 @@ namespace HatSync
             System.Windows.Forms.MessageBox.Show(
                 exception.ToString(), ":( Sortahandled Exception! - " + ((System.Reflection.AssemblyProductAttribute)System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyProductAttribute), true)[0]).Product, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
         }
-
+#endif
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern System.IntPtr FindWindow(string lpClassName, string lpWindowName);
 
