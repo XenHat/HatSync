@@ -64,9 +64,9 @@ namespace HatSync
         //[Benchmark]
         protected void Main()
         {
-            Console.WriteLine("Running Hashing benchmark");
+            Log.WriteLine("Running Hashing benchmark");
             SimpleHasher.DoHashFileDirect(@"C:\test\blob1");
-            Console.WriteLine("Done.");
+            Log.WriteLine("Done.");
         }
 
         private const string File = @"C:\test\blob1";
