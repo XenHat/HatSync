@@ -50,7 +50,9 @@ namespace HatSync
     {
         internal static void WriteLine(string input)
         {
+#if DEBUG
             System.Console.WriteLine(input);
+#endif
         }
     }
 
