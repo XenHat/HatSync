@@ -42,6 +42,11 @@ namespace HatSync
             return SimpleHasher.ByteArrayToString(_hash);
         }
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         public override bool Equals(object other)
         {
             return Equals(other as UniqueFile);
