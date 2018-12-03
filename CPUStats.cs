@@ -11,7 +11,7 @@ namespace HatSync
 {
     internal static partial class Program
     {
-        private class CpuStats
+        private static class CpuStats
         {
             private static float CurrentCpuUsage;
 
