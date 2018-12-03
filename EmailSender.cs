@@ -103,18 +103,12 @@ namespace HatSync
 
         private static class Creds
         {
-            private static string fromPassword = Properties.Settings.Default.EmailPass;
-
             // TODO: Configurable
-            private static readonly System.Net.Mail.MailAddress fromAddress = new System.Net.Mail.MailAddress(Properties.Settings.Default.EmailFrom, "HatSync notification service");
+            public static string FromPassword => Properties.Settings.Default.EmailPass;
 
-            private static readonly System.Net.Mail.MailAddress toAddress = new System.Net.Mail.MailAddress(Properties.Settings.Default.EmailTo, Properties.Settings.Default.EmailToName);
+            public static MailAddress FromAddress => new System.Net.Mail.MailAddress(Properties.Settings.Default.EmailFrom, "HatSync notification service");
 
-            public static string FromPassword { get => fromPassword; set => fromPassword = value; }
-
-            public static MailAddress FromAddress => fromAddress;
-
-            public static MailAddress ToAddress => toAddress;
+            public static MailAddress ToAddress => new System.Net.Mail.MailAddress(Properties.Settings.Default.EmailTo, Properties.Settings.Default.EmailToName);
         }
     }
 }
