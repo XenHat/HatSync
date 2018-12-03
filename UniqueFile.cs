@@ -12,7 +12,7 @@ namespace HatSync
     /// by basically any value (hash, file name, size, etc)
     /// </summary>
     ///
-    internal struct UniqueFile
+    internal class UniqueFile : IEquatable<UniqueFile>
     {
         public UniqueFile(string a)
         {
@@ -40,6 +40,11 @@ namespace HatSync
         public string GetHashAsString()
         {
             return SimpleHasher.ByteArrayToString(_hash);
+        }
+
+        public bool Equals(UniqueFile other)
+        {
+            return _hash == other.Hash;
         }
 
         private readonly string _fullpath;
