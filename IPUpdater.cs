@@ -23,7 +23,7 @@ namespace HatSync
 
         public static IEnumerable<IPAddress> GetCachedIPs()
         {
-            return new System.Collections.Generic.HashSet<System.Net.IPAddress>() { CachedExternalIpAddressv4, CachedExternalIpAddressv6 };
+            return new System.Collections.Generic.HashSet<System.Net.IPAddress> { CachedExternalIpAddressv4, CachedExternalIpAddressv6 };
         }
 
         internal static void PrepareIPsForUpdate()
