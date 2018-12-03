@@ -305,7 +305,7 @@ namespace HatSync
             return changed;
         }
 
-        private static System.Collections.Generic.HashSet<IPAddress> GetNewUpsFromLocalAdapters()
+        private static System.Collections.Generic.HashSet<IPAddress> GetNewIpsFromLocalAdapters()
         {
             System.Collections.Generic.HashSet<System.Net.IPAddress> returnValue = new System.Collections.Generic.HashSet<System.Net.IPAddress>();
             try
