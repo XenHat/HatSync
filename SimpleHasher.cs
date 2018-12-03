@@ -104,13 +104,15 @@ namespace HatSync
             System.Collections.Generic.List<string> contents = new System.Collections.Generic.List<string>();
             // Todo: Return an array maybe?
             if (Directory.Exists(folder))
+            {
                 foreach (var path in Directory.EnumerateFiles(folder))
                 {
                     contents.Add(path);
                     Log.WriteLine("Found '" + path + "'");
                 }
 
-            return contents;
+                return contents;
+            }
         }
 
         public static string GetFileHash(string path)
