@@ -216,7 +216,7 @@ namespace HatSync
                         IpUpdater.SetUpTimer();
 
                         // Attach a context menu.
-                        MenuGenerator.ContextMenus.RegenerateMenu();
+                        MenuGenerator.RegenerateMenu();
 
                         if (runHashTest)
                         {
