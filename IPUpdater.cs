@@ -140,7 +140,7 @@ namespace HatSync
                     catch (System.Exception ex)
                     {
                         Log.WriteLine("Fetching IPv4 failed");
-                        Log.WriteLine("Exception:" + ex.ToString());
+                        Log.WriteLine("Exception:" + ex);
                     }
                     finally
                     {
