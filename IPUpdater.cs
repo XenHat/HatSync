@@ -78,20 +78,10 @@ namespace HatSync
             }
         }
 
-        private static System.Collections.Generic.HashSet<System.Net.IPAddress> GetNewIPs()
-        {
-            //// TODO: Use IEnumerable
-            System.Collections.Generic.HashSet<System.Net.IPAddress> result = GetNewIPsFromOutside();
-            return result;
-
-        }
-
-        private static System.Collections.Generic.HashSet<System.Net.IPAddress> GetNewIPsFromOutside()
+        private static System.Collections.Generic.HashSet<System.Net.IPAddress> GetNewPublicIPs()
         {
             // Requires internet. Makes sense since you can't get an INTERNET address without it.
             // TODO: Make sure the client works fine without these. It can and will happen.
-            System.Collections.Generic.HashSet<System.Net.IPAddress> returnValue = new System.Collections.Generic.HashSet<System.Net.IPAddress>();
-
             try
             {
                 System.Net.IPAddress v6 = null;
@@ -224,7 +214,7 @@ namespace HatSync
         private static bool CheckIpChange(/*bool forced = false*/)
         {
             IEnumerable<IPAddress> cachedIps = CachedValues.GetCachedIPs();
-            System.Collections.Generic.HashSet<System.Net.IPAddress> newIps = GetNewIPs();
+            System.Collections.Generic.HashSet<System.Net.IPAddress> newIps = GetNewPublicIPs();
             if (newIps == null)
             {
                 Log.WriteLine("IP Fetcher returned null! Woah! We don't have offline mode right now so something is very wrong!");
