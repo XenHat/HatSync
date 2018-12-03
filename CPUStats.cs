@@ -9,6 +9,7 @@
 
 namespace HatSync
 {
+    /*
     internal static partial class Program
     {
         private static class CpuStats
@@ -106,4 +107,5 @@ namespace HatSync
             }
         }
     }
+    */
 }
