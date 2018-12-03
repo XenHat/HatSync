@@ -346,9 +346,13 @@ namespace HatSync
 #endif
 
         // I don't know how to remove this method and pass CheckAndSendEmail() directly.
-        private static void OnTimedIpUpdaterEvent(object source, System.Timers.ElapsedEventArgs e)
+        private static void OnTimedIpUpdaterEvent(object sender, System.Timers.ElapsedEventArgs e)
         {
-            CheckAndSendEmail();
+            // Make static analyzer happy; removing 'sender' here would break the call.
+            if (sender != null)
+            {
+                CheckAndSendEmail();
+            }
         }
 
         protected class ImpatientWebClient : System.Net.WebClient

@@ -114,9 +114,12 @@ namespace HatSync
 
         private static void OnTimedEvent(object sender, System.Timers.ElapsedEventArgs e)
         {
-            DoIdleTasks();
+            // Make static analyzer happy; removing 'sender' here would break the call.
+            if (sender != null)
+            {
+                DoIdleTasks();
+            }
         }
-
         public static void SetConsoleWindowVisibility(bool visible, string title)
         {
             System.IntPtr hWnd = FindWindow(null, title);
