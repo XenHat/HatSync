@@ -9,7 +9,7 @@
 [assembly: System.Reflection.AssemblyConfiguration("")]
 [assembly: System.Reflection.AssemblyCompany("Ociidii-Works")]
 [assembly: System.Reflection.AssemblyProduct("HatSync")]
-[assembly: System.Reflection.AssemblyCopyright("2017 (c) Xenhat")]
+[assembly: System.Reflection.AssemblyCopyright("2017-2019 (c) Xenhat")]
 [assembly: System.Reflection.AssemblyTrademark("")]
 [assembly: System.Reflection.AssemblyCulture("")]
 
@@ -26,6 +26,6 @@
 //
 // You can specify all the values or you can default the Build and Revision Numbers by using the '*'
 // as shown below: [assembly: AssemblyVersion("1.0.*")]
-[assembly: System.Reflection.AssemblyVersion("0.0.1.2")]
+[assembly: System.Reflection.AssemblyVersion("0.0.1.3")]
 [assembly: System.Reflection.AssemblyFileVersion("0.0.0.0")]
 [assembly: System.Resources.NeutralResourcesLanguage("en")]
