@@ -29,7 +29,11 @@ namespace HatSync
             }
         }
 
-        public static void CheckAndSendEmail(bool forceSend = false)
+        public static void CheckAndSendEmail()
+        {
+            CheckAndSendEmail(false);
+        }
+        public static void CheckAndSendEmail(bool forceSend)
         {
             if (forceSend)
             {
