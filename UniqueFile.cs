@@ -12,7 +12,7 @@ namespace HatSync
     /// by basically any value (hash, file name, size, etc)
     /// </summary>
     ///
-    internal class UniqueFile
+    internal class UniqueFile : IEquatable<UniqueFile>
     {
         public UniqueFile(string a)
         {
