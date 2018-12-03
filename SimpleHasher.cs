@@ -110,9 +110,8 @@ namespace HatSync
                     contents.Add(path);
                     Log.WriteLine("Found '" + path + "'");
                 }
-
-                return contents;
             }
+            return contents;
         }
 
         public static string GetFileHash(string path)
