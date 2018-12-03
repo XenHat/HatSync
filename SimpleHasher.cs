@@ -72,7 +72,7 @@ namespace HatSync
         private const string File = @"C:\test\blob1";
     }
 
-    internal class SimpleHasher
+    internal static class SimpleHasher
     {
         public static string ByteArrayToString(byte[] ba)
         {
