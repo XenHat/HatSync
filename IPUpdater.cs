@@ -204,7 +204,7 @@ namespace HatSync
                         CachedValues.PreviousExternalIpAddressv4 = v4;
                     }
 
-                    CheckAndSendEmail(false);
+                    CheckAndSendEmail();
                     System.Timers.Timer aTimer = new System.Timers.Timer(60 * 60 * 1000); //one hour in milliseconds
                     aTimer.Elapsed += OnTimedIpUpdaterEvent;
                     _alreadyStarted = true;
