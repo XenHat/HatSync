@@ -59,7 +59,7 @@ namespace HatSync
             private static System.Diagnostics.PerformanceCounter RamCounter;
             private static readonly System.Collections.Generic.List<float> _availableCpu = new System.Collections.Generic.List<float>();
             private static readonly System.Collections.Generic.List<float> _availableRam = new System.Collections.Generic.List<float>();
-            private static int _cores = 0;
+            private static int _cores;
             private static readonly System.Collections.Generic.List<System.Diagnostics.PerformanceCounter> CpuCounters = new System.Collections.Generic.List<System.Diagnostics.PerformanceCounter>();
 
             private static void Main(string[] args)

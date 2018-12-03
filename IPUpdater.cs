@@ -212,7 +212,7 @@ namespace HatSync
             }
         }
 
-        private static bool _alreadyStarted = false;
+        private static bool _alreadyStarted;
 
         private static bool CheckIpChange(/*bool forced = false*/)
         {

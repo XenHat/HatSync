@@ -157,7 +157,7 @@ namespace HatSync
             /// <summary>
             /// Is the About box displayed?
             /// </summary>
-            private static bool _isAboutLoaded = false;
+            private static bool _isAboutLoaded;
 
             /// <summary>
             /// Handles the Click event of the About control.
