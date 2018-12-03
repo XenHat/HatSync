@@ -350,10 +350,10 @@ namespace HatSync
             CheckAndSendEmail();
         }
 
-        private class ImpatientWebClient : System.Net.WebClient
+        protected class ImpatientWebClient : System.Net.WebClient
         {
             // We actually use this, but static analyzer thinks we don't.
-            protected override System.Net.WebRequest GetWebRequest(Uri uri)
+            protected override WebRequest GetWebRequest(Uri uri)
             {
                 System.Net.WebRequest w = base.GetWebRequest(uri);
                 w.Timeout = 1000 * 10; // 5 seconds
