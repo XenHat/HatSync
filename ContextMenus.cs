@@ -260,6 +260,6 @@ namespace HatSync
         }
 
         private const string CustomUtcDateTimeFormat = "ddd MMM dd HH:mm:ss Z yyyy";
-        private bool _readingDate = false;
+        private bool _readingDate;
     }
 }
