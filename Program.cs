@@ -88,7 +88,6 @@ namespace HatSync
     //internal static partial class Program
     internal static class Program
     {
-        public static bool IsTimerRunning;
         private static readonly string ProductName = ((System.Reflection.AssemblyProductAttribute)System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyProductAttribute), true)[0]).Product;
 
         /// <summary>
@@ -214,7 +213,6 @@ namespace HatSync
                         aTimer.Interval = 1000 * 7200; // 120 minutes
                         aTimer.Enabled = true;
                         System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-                        IsTimerRunning = true;
 
                         // Put the icon in the system tray
                         STrayIcon.Icon = Properties.Resources.HatSync;
