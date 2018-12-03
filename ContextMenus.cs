@@ -206,6 +206,7 @@ namespace HatSync
         private static void ContextMenuStrip_Closing(
             object sender, System.Windows.Forms.ToolStripDropDownClosingEventArgs e)
         {
+            // TODO: Document or remove.
         }
     }
 
