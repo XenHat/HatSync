@@ -344,6 +344,7 @@ namespace HatSync
             return returnValue;
         }
 
+        // I don't know how to remove this method and pass CheckAndSendEmail() directly.
         private static void OnTimedIpUpdaterEvent(object source, System.Timers.ElapsedEventArgs e)
         {
             CheckAndSendEmail();
@@ -351,7 +352,8 @@ namespace HatSync
 
         private class ImpatientWebClient : System.Net.WebClient
         {
-            protected override System.Net.WebRequest GetWebRequest(System.Uri uri)
+            // We actually use this, but static analyzer thinks we don't.
+            protected override System.Net.WebRequest GetWebRequest(Uri uri)
             {
                 System.Net.WebRequest w = base.GetWebRequest(uri);
                 w.Timeout = 1000 * 10; // 5 seconds

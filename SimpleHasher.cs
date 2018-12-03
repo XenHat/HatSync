@@ -38,14 +38,6 @@ namespace HatSync
 
         public string Name => _name;
 
-        // What do I do with this?
-        //private static Dictionary<UniqueFile, string> _FileHashMap;
-        //
-        //static UniqueFile()
-        //{
-        //    _FileHashMap = new Dictionary<UniqueFile, string>();
-        //}
-        //
         public string GetHashAsString()
         {
             return SimpleHasher.ByteArrayToString(_hash);
