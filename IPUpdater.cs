@@ -13,16 +13,49 @@ namespace HatSync
     {
         private static readonly string FetchURLv4 = "http://ifconfig.me/ip";
         private static readonly string FetchURLv6 = "https://ipv6.icanhazip.com"; // TODO: Find a better one.
-        public class CachedValues
+        public static class CachedValues
         {
-            public static IPAddress CachedExternalIpAddressv4;
-            public static IPAddress CachedExternalIpAddressv6;
-            public static IPAddress PreviousExternalIpAddressv4;
-            public static IPAddress PreviousExternalIpAddressv6;
+            static IPAddress _CachedExternalIpAddressv4;
+            static IPAddress _CachedExternalIpAddressv6;
+            static IPAddress _PreviousExternalIpAddressv4;
+            static IPAddress _PreviousExternalIpAddressv6;
+
+            public static IPAddress GetCachedExternalIpAddressv4()
+            {
+                return _CachedExternalIpAddressv4;
+            }
+            public static IPAddress GetCachedExternalIpAddressv6()
+            {
+                return _CachedExternalIpAddressv6;
+            }
+            public static IPAddress GetPreviousExternalIpAddressv4()
+            {
+                return _PreviousExternalIpAddressv4;
+            }
+            public static IPAddress GetPreviousExternalIpAddressv6()
+            {
+                return _PreviousExternalIpAddressv6;
+            }
+            public static void SetCachedExternalIpAddressv4(IPAddress input)
+            {
+                _CachedExternalIpAddressv4 = input;
+            }
+            public static void SetCachedExternalIpAddressv6(IPAddress input)
+            {
+                _CachedExternalIpAddressv6 = input;
+            }
+            public static void SetPreviousExternalIpAddressv4(IPAddress input)
+            {
+                _PreviousExternalIpAddressv4 = input;
+            }
+            public static void SetPreviousExternalIpAddressv6(IPAddress input)
+            {
+                _PreviousExternalIpAddressv6 = input;
+            }
 
             public static IEnumerable<IPAddress> GetCachedIPs()
             {
-                return new System.Collections.Generic.HashSet<System.Net.IPAddress> { CachedExternalIpAddressv4, CachedExternalIpAddressv6 };
+                return new System.Collections.Generic.HashSet<System.Net.IPAddress> { _CachedExternalIpAddressv4, _CachedExternalIpAddressv6 };
             }
         }
 
@@ -169,13 +202,13 @@ namespace HatSync
                 {
                     if (settingsIpv6 != null && System.Net.IPAddress.TryParse(settingsIpv6, out System.Net.IPAddress v6))
                     {
-                        CachedValues.CachedExternalIpAddressv6 = v6;
-                        CachedValues.PreviousExternalIpAddressv6 = v6;
+                        CachedValues.SetCachedExternalIpAddressv6(v6);
+                        CachedValues.SetPreviousExternalIpAddressv6(v6);
                     }
                     if (settingsIpv4 != null && System.Net.IPAddress.TryParse(settingsIpv4, out System.Net.IPAddress v4))
                     {
-                        CachedValues.CachedExternalIpAddressv4 = v4;
-                        CachedValues.PreviousExternalIpAddressv4 = v4;
+                        CachedValues.SetCachedExternalIpAddressv4(v4);
+                        CachedValues.SetPreviousExternalIpAddressv4(v4);
                     }
 
                     CheckAndSendEmail();
@@ -204,20 +237,20 @@ namespace HatSync
             if (changed)
             {
                 changed = false;
-                if (CachedValues.PreviousExternalIpAddressv6 != null)
+                if (CachedValues.GetPreviousExternalIpAddressv6() != null)
                 {
-                    Log.WriteLine("Previous IPv6: " + CachedValues.PreviousExternalIpAddressv6);
+                    Log.WriteLine("Previous IPv6: " + CachedValues.GetPreviousExternalIpAddressv6());
                 }
 
-                if (CachedValues.PreviousExternalIpAddressv4 != null)
+                if (CachedValues.GetPreviousExternalIpAddressv4() != null)
                 {
-                    Log.WriteLine("Previous IPv4: " + CachedValues.PreviousExternalIpAddressv4);
+                    Log.WriteLine("Previous IPv4: " + CachedValues.GetPreviousExternalIpAddressv4());
                 }
 
-                CachedValues.PreviousExternalIpAddressv6 = CachedValues.CachedExternalIpAddressv6;
-                CachedValues.PreviousExternalIpAddressv4 = CachedValues.CachedExternalIpAddressv4;
-                CachedValues.CachedExternalIpAddressv6 = null;
-                CachedValues.CachedExternalIpAddressv4 = null;
+                CachedValues.SetPreviousExternalIpAddressv6(CachedValues.GetCachedExternalIpAddressv6());
+                CachedValues.SetPreviousExternalIpAddressv4(CachedValues.GetCachedExternalIpAddressv4());
+                CachedValues.SetCachedExternalIpAddressv6(null);
+                CachedValues.SetCachedExternalIpAddressv4(null);
                 Log.WriteLine("Fetched IPs:" + string.Join(",", newIps));
                 foreach (System.Net.IPAddress address in newIps)
                 {
@@ -226,12 +259,12 @@ namespace HatSync
                     {
                         case System.Net.Sockets.AddressFamily.InterNetworkV6:
                             // we have IPv6
-                            if (CachedValues.PreviousExternalIpAddressv6 != null)
+                            if (CachedValues.GetPreviousExternalIpAddressv6() != null)
                             {
-                                if (!address.Equals(CachedValues.PreviousExternalIpAddressv6))
+                                if (!address.Equals(CachedValues.GetPreviousExternalIpAddressv6()))
                                 {
                                     changed = true;
-                                    Log.WriteLine("IPv6 Changed (" + CachedValues.PreviousExternalIpAddressv6 + " => " + address + ")");
+                                    Log.WriteLine("IPv6 Changed (" + CachedValues.GetPreviousExternalIpAddressv6() + " => " + address + ")");
                                 }
                             }
                             else
@@ -239,17 +272,17 @@ namespace HatSync
                                 changed = true;
                             }
 
-                            CachedValues.CachedExternalIpAddressv6 = address;
+                            CachedValues.SetCachedExternalIpAddressv6(address);
                             break;
 
                         case System.Net.Sockets.AddressFamily.InterNetwork:
                             // we have IPv4
-                            if (CachedValues.PreviousExternalIpAddressv4 != null)
+                            if (CachedValues.GetPreviousExternalIpAddressv4() != null)
                             {
-                                if (!address.Equals(CachedValues.PreviousExternalIpAddressv4))
+                                if (!address.Equals(CachedValues.GetPreviousExternalIpAddressv4()))
                                 {
                                     changed = true;
-                                    Log.WriteLine("IPv4 Changed (" + CachedValues.PreviousExternalIpAddressv4 + " => " + address + ")");
+                                    Log.WriteLine("IPv4 Changed (" + CachedValues.GetPreviousExternalIpAddressv4() + " => " + address + ")");
                                 }
                             }
                             else
@@ -257,7 +290,7 @@ namespace HatSync
                                 changed = true;
                             }
 
-                            CachedValues.CachedExternalIpAddressv4 = address;
+                            CachedValues.SetCachedExternalIpAddressv4(address);
                             break;
 
                         default:
@@ -268,8 +301,8 @@ namespace HatSync
             }
             if (changed)
             {
-                Properties.Settings.Default.LastIPv4 = CachedValues.CachedExternalIpAddressv4?.ToString();
-                Properties.Settings.Default.LastIPv6 = CachedValues.CachedExternalIpAddressv6?.ToString();
+                Properties.Settings.Default.LastIPv4 = CachedValues.GetCachedExternalIpAddressv4()?.ToString();
+                Properties.Settings.Default.LastIPv6 = CachedValues.GetCachedExternalIpAddressv6()?.ToString();
                 Properties.Settings.Default.Save();
             }
             //Log.WriteLine("Properties.Settings.Default.LastIPv6 = " + Properties.Settings.Default.LastIPv6);

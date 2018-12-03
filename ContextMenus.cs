@@ -58,17 +58,17 @@ namespace HatSync
             TrackedToolStripMenuItem item = null;
 
             // Add IPs there for fun.
-            if (IPUpdater.CachedValues.CachedExternalIpAddressv6 != null)
+            if (IPUpdater.CachedValues.GetCachedExternalIpAddressv6() != null)
             {
                 item = new TrackedToolStripMenuItem();
-                item.Value.Text = IPUpdater.CachedValues.CachedExternalIpAddressv6.ToString();
+                item.Value.Text = IPUpdater.CachedValues.GetCachedExternalIpAddressv6().ToString();
                 item.Value.Enabled = false;
                 Program.STrayIcon.ContextMenuStrip.Items.Add(item.Value);
             }
-            if (IPUpdater.CachedValues.CachedExternalIpAddressv4 != null)
+            if (IPUpdater.CachedValues.GetCachedExternalIpAddressv4() != null)
             {
                 item = new TrackedToolStripMenuItem();
-                item.Value.Text = IPUpdater.CachedValues.CachedExternalIpAddressv4.ToString();
+                item.Value.Text = IPUpdater.CachedValues.GetCachedExternalIpAddressv4().ToString();
                 item.Value.Enabled = false;
                 Program.STrayIcon.ContextMenuStrip.Items.Add(item.Value);
             }
