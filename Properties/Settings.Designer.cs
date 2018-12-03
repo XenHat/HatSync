@@ -8,11 +8,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MainApplication.Properties {
+namespace HatSync.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.3.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.8.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -25,97 +25,97 @@ namespace MainApplication.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
-<ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-  <string>ApplicationFrameHost</string>
-  <string>Calculator</string>
-  <string>Weather</string>
-  <string>Photos</string>
-  <string>Dropbox</string>
-  <string>Calculator</string>
-  <string>Films &amp; TV</string>
-  <string>NVIDIA Share</string>
-  <string>Store</string>
-  <string>Xbox</string>
-</ArrayOfString>")]
-        public global::System.Collections.Specialized.StringCollection KnownGPUProcesses {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastIPv4 {
             get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["KnownGPUProcesses"]));
+                return ((string)(this["LastIPv4"]));
             }
             set {
-                this["KnownGPUProcesses"] = value;
+                this["LastIPv4"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool ShowNotifications {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastIPv6 {
             get {
-                return ((bool)(this["ShowNotifications"]));
+                return ((string)(this["LastIPv6"]));
             }
             set {
-                this["ShowNotifications"] = value;
+                this["LastIPv6"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool Debug {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string EmailTo {
             get {
-                return ((bool)(this["Debug"]));
+                return ((string)(this["EmailTo"]));
             }
             set {
-                this["Debug"] = value;
+                this["EmailTo"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AutomaticStartup {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string EmailPass {
             get {
-                return ((bool)(this["AutomaticStartup"]));
+                return ((string)(this["EmailPass"]));
             }
             set {
-                this["AutomaticStartup"] = value;
+                this["EmailPass"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool KillOnIdle {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int EmailPort {
             get {
-                return ((bool)(this["KillOnIdle"]));
+                return ((int)(this["EmailPort"]));
             }
             set {
-                this["KillOnIdle"] = value;
+                this["EmailPort"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ForceOnDemandPowerPlan {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string EmailProvider {
             get {
-                return ((bool)(this["ForceOnDemandPowerPlan"]));
+                return ((string)(this["EmailProvider"]));
             }
             set {
-                this["ForceOnDemandPowerPlan"] = value;
+                this["EmailProvider"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool KillDropbox {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string EmailToName {
             get {
-                return ((bool)(this["KillDropbox"]));
+                return ((string)(this["EmailToName"]));
             }
             set {
-                this["KillDropbox"] = value;
+                this["EmailToName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string EmailFrom {
+            get {
+                return ((string)(this["EmailFrom"]));
+            }
+            set {
+                this["EmailFrom"] = value;
             }
         }
     }

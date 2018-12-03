@@ -1,158 +1,134 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Windows.Forms;
-using System.Xml;
+// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 
-namespace GPUIdleHelper
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
+namespace HatSync
 {
     public class TrackedToolStripMenuItem
     {
-        private Lazy<ToolStripMenuItem> _TemplateToolStripMenuItemList = new Lazy<ToolStripMenuItem>(() => _CreateTemplateToolStripMenuItem());
+        public System.Windows.Forms.ToolStripMenuItem Value => _templateToolStripMenuItemList.Value;
+        private readonly System.Lazy<System.Windows.Forms.ToolStripMenuItem> _templateToolStripMenuItemList = new System.Lazy<System.Windows.Forms.ToolStripMenuItem>(() => _CreateTemplateToolStripMenuItem());
 
-        public ToolStripMenuItem Value
+        private static System.Windows.Forms.ToolStripMenuItem _CreateTemplateToolStripMenuItem()
         {
-            get
-            {
-                return _TemplateToolStripMenuItemList.Value;
-            }
-        }
-
-        private static ToolStripMenuItem _CreateTemplateToolStripMenuItem()
-        {
-            ToolStripMenuItem instance = new ToolStripMenuItem();
+            System.Windows.Forms.ToolStripMenuItem instance = new System.Windows.Forms.ToolStripMenuItem();
             return instance;
         }
     }
 
     /// <summary>
     /// </summary>
-    internal class MenuGenerator
+    internal static class MenuGenerator
     {
-        // This method handles the Closing event. The ToolStripDropDown control is not allowed to
-        // close unless the Done menu item is clicked or the Close method is called explicitly. The
-        // Done menu item is enabled only after both of the other menu items have been selected.
-        private void ContextMenuStrip_Closing(
-            object sender,
-            ToolStripDropDownClosingEventArgs e)
-        {
-        }
-
         public static class ContextMenus
         {
-            private static readonly List<EventHandler> menu_events_handlers = new List<EventHandler>()
-        {
-            Notification_Setting_Click,
-            Startup_Click,
-            KillOnIdle_Click,
-            KillDropbox_Click,
-            Set_Power_Plan_Click,
-        };
-
-            private static readonly List<string> menu_names = new List<string>()
-        {
-            "Notifications",
-            "Run at Login",
-            "Kill on Idle",
-            "Kill Dropbox",
-            "Auto. Power Plan",
-        };
-
-            /// <summary>
-            /// Is the About box displayed?
-            /// </summary>
-            private static bool isAboutLoaded = false;
-
-            private static ToolStripSeparator sSeparator = new ToolStripSeparator();
-
             /// <summary>
             /// Creates this instance.
             /// </summary>
             /// <returns>ContextMenuStrip</returns>
-            public static void CreateFeedsMenu()
+            private static void CreateFeedsMenu()
             {
                 // Warning: This leaves a window in which the menu doesn't exist. I'll fix that later
                 // when the leak is gone.
-                if (Program.sTrayIcon.ContextMenuStrip != null)
+                if (Program.STrayIcon.ContextMenuStrip != null)
                 {
-                    Program.sTrayIcon.ContextMenuStrip.Dispose();
+                    Program.STrayIcon.ContextMenuStrip.Dispose();
                 }
 
                 // Add the default menu options.
-                Program.sTrayIcon.ContextMenuStrip = new ContextMenuStrip();
-                Program.sTrayIcon.ContextMenuStrip.ShowImageMargin = true;
+                Program.STrayIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip
+                {
+                    ShowImageMargin = true
+                };
 
                 // DEBUG
                 //TrackedToolStripMenuItem item = new TrackedToolStripMenuItem();
                 //ProcessIcon.ni.ContextMenuStrip.Items.Add(item);
 
                 // Regenerate a new list with the current settings.
-                List<bool> menu_items_enabled = new List<bool>()
-                {
-                    MainApplication.Properties.Settings.Default.ShowNotifications,
-                    MainApplication.Properties.Settings.Default.AutomaticStartup,
-                    MainApplication.Properties.Settings.Default.KillOnIdle,
-                    MainApplication.Properties.Settings.Default.KillDropbox,
-                    MainApplication.Properties.Settings.Default.ForceOnDemandPowerPlan,
-                };
+                System.Collections.Generic.List<bool> menuItemsEnabled = new System.Collections.Generic.List<bool>();
 
-                for (int i = 0; i < menu_names.Count; i++)
+                for (var i = 0; i < MenuNames.Count; i++)
                 {
-                    var LoopItem = new TrackedToolStripMenuItem().Value;
+                    System.Windows.Forms.ToolStripMenuItem loopItem = new TrackedToolStripMenuItem().Value;
                     //ToolStripMenuItem watt = new ToolStripMenuItem();
-                    LoopItem.Text = menu_names[i];
-                    LoopItem.Click += menu_events_handlers[i];
+                    loopItem.Text = MenuNames[i];
+                    loopItem.Click += MenuEventsHandlers[i];
                     // TODO: Still need to avoid rebuilding the menu every time the menu changes
-                    if (menu_items_enabled[i])
+                    if (menuItemsEnabled[i])
                     {
-                        LoopItem.Image = MainApplication.Properties.Resources.checkmark;
+                        loopItem.Image = Properties.Resources.checkmark;
                     }
 
-                    Program.sTrayIcon.ContextMenuStrip.Items.Add(LoopItem);
+                    Program.STrayIcon.ContextMenuStrip.Items.Add(loopItem);
                 };
 
-                /// ----------------------------------------------------------------------------------
-                /// Always present or static menu items
+                TrackedToolStripMenuItem item = null;
+
+                // Add IPs there for fun.
+                if (CachedValues.CachedExternalIpAddressv6 != null)
+                {
+                    item = new TrackedToolStripMenuItem();
+                    item.Value.Text = CachedValues.CachedExternalIpAddressv6.ToString();
+                    //item.Value.Image = HatSync.Properties.Resources.About;
+                    //item.Value.Click += delegate (object sender, EventArgs e) { About_Click(sender, e); };
+                    item.Value.Enabled = false;
+                    Program.STrayIcon.ContextMenuStrip.Items.Add(item.Value);
+                }
+                if (CachedValues.CachedExternalIpAddressv4 != null)
+                {
+                    item = new TrackedToolStripMenuItem();
+                    item.Value.Text = CachedValues.CachedExternalIpAddressv4.ToString();
+                    //item.Value.Image = HatSync.Properties.Resources.About;
+                    //item.Value.Click += delegate (object sender, EventArgs e) { About_Click(sender, e); };
+                    item.Value.Enabled = false;
+                    Program.STrayIcon.ContextMenuStrip.Items.Add(item.Value);
+                }
 
                 // WOAH, this creates a memory leak!
                 //sTrayIcon.ContextMenuStrip.Items.Add(new ToolStripSeparator()); // Separator.
-                Program.sTrayIcon.ContextMenuStrip.Items.Add(sSeparator);
+                Program.STrayIcon.ContextMenuStrip.Items.Add(SSeparator);
 
-                // Add one entry to this menu to kill everything
-                var item = new TrackedToolStripMenuItem();
-                item.Value.Text = "Force Idle Now!";
-                item.Value.Image = MainApplication.Properties.Resources.Rss;
-                item.Value.Click += delegate (object sender, EventArgs e) { Kill_Click(sender, e); };
-
-                Program.sTrayIcon.ContextMenuStrip.Items.Add(item.Value);
+                // The actual menu begins here
 
                 item = new TrackedToolStripMenuItem();
-                item.Value.Text = "Add Executable";
-                item.Value.Image = MainApplication.Properties.Resources.Plus;
-                item.Value.Click += delegate (object sender, EventArgs e) { AddExecutable(sender, e); };
-                Program.sTrayIcon.ContextMenuStrip.Items.Add(item.Value);
+                item.Value.Text = "[TEST] Hash Desktop folder";
+                //item.Value.Image = HatSync.Properties.Resources.Rss;
+                item.Value.Click += delegate (object sender, System.EventArgs e) { HashTest1_Click(sender, e); };
+                Program.STrayIcon.ContextMenuStrip.Items.Add(item.Value);
+
+                item = new TrackedToolStripMenuItem();
+                item.Value.Text = "[TEST] Hash C:\\";
+                //item.Value.Image = HatSync.Properties.Resources.Rss;
+                item.Value.Click += delegate (object sender, System.EventArgs e) { HashTest2_Click(sender, e); };
+                Program.STrayIcon.ContextMenuStrip.Items.Add(item.Value);
+
+                item = new TrackedToolStripMenuItem();
+                item.Value.Text = "Force IP Update";
+                item.Value.Image = Properties.Resources.Rss;
+                item.Value.Click += delegate (object sender, System.EventArgs e) { ForceIPUpdate_Click(sender, e); };
+                Program.STrayIcon.ContextMenuStrip.Items.Add(item.Value);
 
                 item = new TrackedToolStripMenuItem();
                 item.Value.Text = "About";
-                item.Value.Image = MainApplication.Properties.Resources.About;
-                item.Value.Click += delegate (object sender, EventArgs e) { About_Click(sender, e); };
-                Program.sTrayIcon.ContextMenuStrip.Items.Add(item.Value);
+                item.Value.Image = Properties.Resources.About;
+                item.Value.Click += delegate (object sender, System.EventArgs e) { About_Click(sender, e); };
+                Program.STrayIcon.ContextMenuStrip.Items.Add(item.Value);
 
                 item = new TrackedToolStripMenuItem();
                 item.Value.Text = "Exit";
-                item.Value.Image = MainApplication.Properties.Resources.Exit;
-                item.Value.Click += delegate (object sender, EventArgs e) { Exit_Click(sender, e); };
-                Program.sTrayIcon.ContextMenuStrip.Items.Add(item.Value);
-                /// end ----------------------------------------------------------------------------------
+                item.Value.Image = Properties.Resources.Exit;
+                item.Value.Click += delegate (object sender, System.EventArgs e) { Exit_Click(sender, e); };
+                Program.STrayIcon.ContextMenuStrip.Items.Add(item.Value);
+                // end ----------------------------------------------------------------------------------
                 //if (sTrayIcon.ContextMenuStrip != null)
                 //{
                 //    sTrayIcon.ContextMenuStrip.Dispose();
                 //}
                 //item.Dispose();
 
-                GC.Collect();
-                GC.WaitForFullGCComplete();
+                System.GC.Collect();
+                System.GC.WaitForFullGCComplete();
             }
 
             /// <summary>
@@ -162,15 +138,26 @@ namespace GPUIdleHelper
             /// <param name="e">
             /// The <see cref="System.EventArgs" /> instance containing the event data.
             /// </param>
-            public static void Kill_Click(object sender, EventArgs e)
+            private static void ForceIPUpdate_Click(object sender, System.EventArgs e)
             {
-                Program.DoIdleTasks();
+                IpUpdater.CheckAndSendEmail(true);
             }
 
             public static void RegenerateMenu()
             {
                 CreateFeedsMenu();
             }
+
+            private static readonly System.Collections.Generic.List<System.EventHandler> MenuEventsHandlers = new System.Collections.Generic.List<System.EventHandler>();
+
+            private static readonly System.Collections.Generic.List<string> MenuNames = new System.Collections.Generic.List<string>();
+
+            private static readonly System.Windows.Forms.ToolStripSeparator SSeparator = new System.Windows.Forms.ToolStripSeparator();
+
+            /// <summary>
+            /// Is the About box displayed?
+            /// </summary>
+            private static bool _isAboutLoaded = false;
 
             /// <summary>
             /// Handles the Click event of the About control.
@@ -179,26 +166,14 @@ namespace GPUIdleHelper
             /// <param name="e">
             /// The <see cref="System.EventArgs" /> instance containing the event data.
             /// </param>
-            private static void About_Click(object sender, EventArgs e)
+            private static void About_Click(object sender, System.EventArgs e)
             {
-                if (!isAboutLoaded)
+                if (!_isAboutLoaded)
                 {
-                    isAboutLoaded = true;
+                    _isAboutLoaded = true;
                     new AboutBox().ShowDialog();
-                    isAboutLoaded = false;
+                    _isAboutLoaded = false;
                 }
-            }
-
-            /// <summary>
-            /// Handles the Click event of the Add Feed control.
-            /// </summary>
-            /// <param name="sender">The source of the event.</param>
-            /// <param name="e">
-            /// The <see cref="System.EventArgs" /> instance containing the event data.
-            /// </param>
-            private static void AddExecutable(object sender, EventArgs e)
-            {
-                new AddFeed().ShowDialog();
             }
 
             /// <summary>
@@ -208,148 +183,73 @@ namespace GPUIdleHelper
             /// <param name="e">
             /// The <see cref="System.EventArgs" /> instance containing the event data.
             /// </param>
-            private static void Exit_Click(object sender, EventArgs e)
+            private static void Exit_Click(object sender, System.EventArgs e)
             {
                 // Quit without further ado.
-                Program.sTrayIcon.Visible = false;
-                Application.Exit();
+                Program.STrayIcon.Visible = false;
+                System.Windows.Forms.Application.Exit();
             }
 
-            /// <summary>
-            /// Handles the Click event of the Explorer control.
-            /// </summary>
-            /// <param name="sender">The source of the event.</param>
-            /// <param name="e">
-            /// The <see cref="System.EventArgs" /> instance containing the event data.
-            /// </param>
-            private static void Explorer_Click(object sender, EventArgs e)
+            private static void HashTest1_Click(object sender, System.EventArgs e)
             {
-                Process.Start("explorer", null);
+                SimpleHasher.HashFolder(System.Environment.GetFolderPath(System.Environment.SpecialFolder.DesktopDirectory));
             }
+            private static void HashTest2_Click(object sender, System.EventArgs e)
+            {
+                SimpleHasher.HashFolder(System.IO.Path.GetPathRoot(System.Environment.SystemDirectory));
+            }
+        }
 
-            private static void FeedEntry_Click(object sender, EventArgs e, string u)
-            {
-                try
-                {
-                    ProcessDestroyer.KillProcessByName(u);
-                }
-                catch (Exception ex)
-                {
-                    Program.ExceptionHandler(ex);
-                }
-            }
-
-            private static void KillDropbox_Click(object sender, EventArgs e)
-            {
-                // TODO: Shouldn't we use the event data?
-                MainApplication.Properties.Settings.Default.KillDropbox = !MainApplication.Properties.Settings.Default.KillDropbox;
-                MainApplication.Properties.Settings.Default.Save();
-                RegenerateMenu();
-            }
-
-            /// <summary>
-            /// Handles the Click event of the KillOnIdle control.
-            /// </summary>
-            /// <param name="sender">The sender.</param>
-            /// <param name="e">
-            /// The <see cref="System.EventArgs" /> instance containing the event data.
-            /// </param>
-            private static void KillOnIdle_Click(object sender, EventArgs e)
-            {
-                // TODO: Shouldn't we use the event data?
-                MainApplication.Properties.Settings.Default.KillOnIdle = !MainApplication.Properties.Settings.Default.KillOnIdle;
-                MainApplication.Properties.Settings.Default.Save();
-                RegenerateMenu();
-            }
-
-            /// <summary>
-            /// Handles the Click event of the Notification Setting control.
-            /// </summary>
-            /// <param name="sender">The sender.</param>
-            /// <param name="e">
-            /// The <see cref="System.EventArgs" /> instance containing the event data.
-            /// </param>
-            private static void Notification_Setting_Click(object sender, EventArgs e)
-            {
-                // Flipping here can cause bugs, be more explicit so that the value is always right.
-                MainApplication.Properties.Settings.Default.ShowNotifications = !MainApplication.Properties.Settings.Default.ShowNotifications;
-                MainApplication.Properties.Settings.Default.Save();
-                RegenerateMenu();
-            }
-
-            /// <summary>
-            /// Handles the Click event of the Add Feed control.
-            /// </summary>
-            /// <param name="sender">The source of the event.</param>
-            /// <param name="e">
-            /// The <see cref="System.EventArgs" /> instance containing the event data.
-            /// </param>
-            private static void Set_Power_Plan_Click(object sender, EventArgs e)
-            {
-                MainApplication.Properties.Settings.Default.ForceOnDemandPowerPlan = !MainApplication.Properties.Settings.Default.ForceOnDemandPowerPlan;
-                MainApplication.Properties.Settings.Default.Save();
-                RegenerateMenu();
-            }
-
-            /// <summary>
-            /// Handles the Click event of the Startup control.
-            /// </summary>
-            /// <param name="sender">The sender.</param>
-            /// <param name="e">
-            /// The <see cref="System.EventArgs" /> instance containing the event data.
-            /// </param>
-            private static void Startup_Click(object sender, EventArgs e)
-            {
-                MainApplication.Properties.Settings.Default.AutomaticStartup = !MainApplication.Properties.Settings.Default.AutomaticStartup;
-                MainApplication.Properties.Settings.Default.Save();
-                RegenerateMenu();
-                Integration.AddToStartup();
-            }
+        // This method handles the Closing event. The ToolStripDropDown control is not allowed to
+        // close unless the Done menu item is clicked or the Close method is called explicitly. The
+        // Done menu item is enabled only after both of the other menu items have been selected.
+        private static void ContextMenuStrip_Closing(
+            object sender, System.Windows.Forms.ToolStripDropDownClosingEventArgs e)
+        {
         }
     }
 
-    internal class MyXmlReader : XmlTextReader
+    internal class MyXmlReader : System.Xml.XmlTextReader
     {
-        private const string CustomUtcDateTimeFormat = "ddd MMM dd HH:mm:ss Z yyyy";
-        private bool readingDate = false;
-        // Wed Oct 07 08:00:07 GMT 2009
-
-        public MyXmlReader(Stream s) : base(s)
+        public MyXmlReader(System.IO.Stream s) : base(s)
         {
         }
 
+        // Wed Oct 07 08:00:07 GMT 2009
         public MyXmlReader(string inputUri) : base(inputUri)
         {
         }
 
         public override void ReadEndElement()
         {
-            if (readingDate)
+            if (_readingDate)
             {
-                readingDate = false;
+                _readingDate = false;
             }
             base.ReadEndElement();
         }
 
         public override void ReadStartElement()
         {
-            if (string.Equals(base.NamespaceURI, string.Empty, StringComparison.InvariantCultureIgnoreCase) &&
-                (string.Equals(base.LocalName, "lastBuildDate", StringComparison.InvariantCultureIgnoreCase) ||
-                string.Equals(base.LocalName, "pubDate", StringComparison.InvariantCultureIgnoreCase)))
+            if (string.Equals(base.NamespaceURI, string.Empty, System.StringComparison.InvariantCultureIgnoreCase) &&
+                (string.Equals(base.LocalName, "lastBuildDate", System.StringComparison.InvariantCultureIgnoreCase) ||
+                string.Equals(base.LocalName, "pubDate", System.StringComparison.InvariantCultureIgnoreCase)))
             {
-                readingDate = true;
+                _readingDate = true;
             }
             base.ReadStartElement();
         }
 
         public override string ReadString()
         {
-            if (readingDate)
+            if (_readingDate)
             {
-                string dateString = base.ReadString();
-                DateTime dt;
-                if (!DateTime.TryParse(dateString, out dt))
-                    dt = DateTime.ParseExact(dateString, CustomUtcDateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
+                var dateString = base.ReadString();
+                if (!System.DateTime.TryParse(dateString, out System.DateTime dt))
+                {
+                    dt = System.DateTime.ParseExact(dateString, CustomUtcDateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
+                }
+
                 return dt.ToUniversalTime().ToString("R", System.Globalization.CultureInfo.InvariantCulture);
             }
             else
@@ -357,5 +257,8 @@ namespace GPUIdleHelper
                 return base.ReadString();
             }
         }
+
+        private const string CustomUtcDateTimeFormat = "ddd MMM dd HH:mm:ss Z yyyy";
+        private bool _readingDate = false;
     }
 }

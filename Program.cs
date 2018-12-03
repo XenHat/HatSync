@@ -1,30 +1,75 @@
-﻿// Based on https://www.codeproject.com/Articles/290013/Formless-System-Tray-Application
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
-using System.Threading;
-using System.Timers;
-using System.Windows.Forms;
+// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 
-namespace GPUIdleHelper
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
+// Based on https://www.codeproject.com/Articles/290013/Formless-System-Tray-Application
+
+// TODO: Remove, and use DotNet Core methods for Linux client portability.
+// See https://adrientorris.github.io/aspnet-core/how-to-implement-timer-netcoreapp1-0-netcoreapp1-1.html
+
+using System.Collections.Generic;
+
+namespace HatSync
 {
+    public static class ConsoleHelper
+    {
+        public static void CreateConsole()
+        {
+            AllocConsole();
+
+            // stdout's handle seems to always be equal to 7
+            System.IntPtr defaultStdout = new System.IntPtr(7);
+            System.IntPtr currentStdout = GetStdHandle(StdOutputHandle);
+
+            if (currentStdout != defaultStdout)
+            {
+                // reset stdout
+                SetStdHandle(StdOutputHandle, defaultStdout);
+            }
+
+            // reopen stdout
+            System.IO.TextWriter writer = new System.IO.StreamWriter(System.Console.OpenStandardOutput())
+            { AutoFlush = true };
+            System.Console.SetOut(writer);
+        }
+
+        // P/Invoke required:
+        private const uint StdOutputHandle = 0xFFFFFFF5;
+
+        [System.Runtime.InteropServices.DllImport("kernel32")]
+        private static extern bool AllocConsole();
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        private static extern System.IntPtr GetStdHandle(uint nStdHandle);
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        private static extern void SetStdHandle(uint nStdHandle, System.IntPtr handle);
+    }
+
+    public static class Log
+    {
+        internal static void WriteLine(string input)
+        {
+            System.Console.WriteLine(input);
+        }
+    }
+
     internal static class Helper
     {
         public static System.Collections.Generic.List<string> Convert(System.Collections.Specialized.StringCollection collection)
         {
             System.Collections.Generic.List<string> list = new System.Collections.Generic.List<string>();
-            foreach (string item in collection)
+            foreach (var item in collection)
             {
                 list.Add(item);
             }
             return list;
         }
 
-        public static System.Collections.Specialized.StringCollection Convert(System.Collections.Generic.List<string> list)
+        public static System.Collections.Specialized.StringCollection Convert(IEnumerable<string> list)
         {
             System.Collections.Specialized.StringCollection collection = new System.Collections.Specialized.StringCollection();
-            foreach (string item in list)
+            foreach (var item in list)
             {
                 collection.Add(item);
             }
@@ -37,178 +82,197 @@ namespace GPUIdleHelper
         }
     }
 
-    internal static class Program
+    internal static partial class Program
     {
-        public static bool isTimerRunning = false;
-
-        public static string ProductName = ((AssemblyProductAttribute)Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), true)[0]).Product;
+        public static bool IsTimerRunning = false;
+        private static readonly string ProductName = ((System.Reflection.AssemblyProductAttribute)System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyProductAttribute), true)[0]).Product;
 
         /// <summary>
         /// Static instance of the Tray Icon
         /// </summary>
-        public static NotifyIcon sTrayIcon = new NotifyIcon();
+        public static readonly System.Windows.Forms.NotifyIcon STrayIcon = new System.Windows.Forms.NotifyIcon();
 
-        public static void DoIdleTasks()
+        private static void DoIdleTasks()
         {
-            if (MainApplication.Properties.Settings.Default.KillOnIdle)
-            {
-                // NOTE: I would prefer to check the process' GPU usage but this appears to be
-                //       difficult to obtain.
-                //if (CPUStats.currentCPUUsage < 30.0)
-                {
-                    ProcessDestroyer.KillCompilerProcesses();
-                }
-            }
-            if (MainApplication.Properties.Settings.Default.ForceOnDemandPowerPlan)
-            {
-                Integration.SetPowerPlanToOnDemand();
-            }
+            // Do not run sendemail here, it has its own timer.
+            //IPUpdater.SendEmail();
         }
 
-        public static void ExceptionHandler(Exception exception)
+        private static void ExceptionHandler(System.Exception exception)
         {
             // Meep.
             System.Windows.Forms.MessageBox.Show(
-                exception.ToString(), ":( Sortahandled Exception! - " + ((AssemblyProductAttribute)Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), true)[0]).Product.ToString(),
-                System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                exception.ToString(), ":( Sortahandled Exception! - " + ((System.Reflection.AssemblyProductAttribute)System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyProductAttribute), true)[0]).Product, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
         }
 
-        public static void OnTimedEvent(object sender, ElapsedEventArgs e)
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern System.IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        private static void OnTimedEvent(object sender, System.Timers.ElapsedEventArgs e)
         {
             DoIdleTasks();
         }
 
+        public static void SetConsoleWindowVisibility(bool visible, string title)
+        {
+            System.IntPtr hWnd = FindWindow(null, title);
+            if (hWnd != System.IntPtr.Zero)
+            {
+                if (!visible)
+                {
+                    ShowWindow(hWnd, 0);
+                }
+                else
+                {
+                    ShowWindow(hWnd, 1);
+                }
+            }
+        }
+
+        [System.Runtime.InteropServices.DllImport("msvcrt.dll")]
+        public static extern int system(string cmd);
+
+        private const int MyCodePage = 437;
+
+        private const int StdOutputHandle = -11;
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll",
+            EntryPoint = "AllocConsole",
+            SetLastError = true,
+            CharSet = System.Runtime.InteropServices.CharSet.Auto,
+            CallingConvention = System.Runtime.InteropServices.CallingConvention.StdCall)]
+        private static extern int AllocConsole();
+
+        private static void ConsoleMain()
+        {
+            Log.WriteLine("HI FROM CONSOLEMAIN");
+            //throw new NotImplementedException();
+        }
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll",
+           EntryPoint = "GetStdHandle",
+           SetLastError = true,
+           CharSet = System.Runtime.InteropServices.CharSet.Auto,
+           CallingConvention = System.Runtime.InteropServices.CallingConvention.StdCall)]
+        private static extern System.IntPtr GetStdHandle(int nStdHandle);
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        [STAThread]
-        private static void Main()
+        [System.STAThread]
+        private static void Main(string[] args)
         {
             // Quit if already running https://stackoverflow.com/a/6392264
-            Mutex mutex = new System.Threading.Mutex(false, ProductName);
+            System.Threading.Mutex mutex = new System.Threading.Mutex(false, ProductName);
+            var runBenchmark = false;
+            var runHashTest = false;
             try
             {
                 if (mutex.WaitOne(0, false))
                 {
-                    // Show the system tray icon.
-                    Application.EnableVisualStyles();
-                    //Application.SetCompatibleTextRenderingDefault(true);
+                    if (args != null && args.Length > 0)
+                    {
+                        for (var i = 0; i < args.Length; i++)
+                        {
+                            var s = args[i];
+                            if (s == "--debug")
+                            {
+                                // Throw everything inside a new console window. This code works.
+                                AllocConsole();
+                                System.IntPtr stdHandle = GetStdHandle(StdOutputHandle);
+                                Microsoft.Win32.SafeHandles.SafeFileHandle safeFileHandle = new Microsoft.Win32.SafeHandles.SafeFileHandle(stdHandle, true);
+                                System.IO.FileStream fileStream = new System.IO.FileStream(safeFileHandle, System.IO.FileAccess.Write);
+                                System.Text.Encoding encoding = System.Text.Encoding.GetEncoding(MyCodePage);
+                                System.IO.StreamWriter standardOutput = new System.IO.StreamWriter(fileStream, encoding)
+                                {
+                                    AutoFlush = true
+                                };
+                                System.Console.SetOut(standardOutput);
+                            }
+                            if (s == "--benchmark")
+                            {
+                                runBenchmark = true;
+                            }
+                            if (s == "--test")
+                            {
+                                runHashTest = true;
+                            }
+                        }
+                    }
+                    if (!runBenchmark)
+                    {
+                        // Show the system tray icon.
+                        System.Windows.Forms.Application.EnableVisualStyles();
+                        //Application.SetCompatibleTextRenderingDefault(true);
 
-                    System.Timers.Timer aTimer = new System.Timers.Timer();
-                    aTimer.Elapsed += Program.OnTimedEvent;
-                    aTimer.Interval = 1000 * 7200; // 120 minutes
-                    aTimer.Enabled = true;
-                    Stopwatch sw = Stopwatch.StartNew();
-                    isTimerRunning = true;
+                        System.Timers.Timer aTimer = new System.Timers.Timer();
+                        aTimer.Elapsed += OnTimedEvent;
+                        aTimer.Interval = 1000 * 7200; // 120 minutes
+                        aTimer.Enabled = true;
+                        System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+                        IsTimerRunning = true;
 
-                    SettingsManager.LoadSettings();
+                        // Put the icon in the system tray
+                        STrayIcon.Icon = Properties.Resources.HatSync;
+                        STrayIcon.Text = "HatSync";
+                        STrayIcon.Visible = true;
 
-                    // Put the icon in the system tray
-                    sTrayIcon.Icon = MainApplication.Properties.Resources.GPUIdleHelper;
-                    sTrayIcon.Text = "GPUIdleHelper";
-                    sTrayIcon.Visible = true;
+                        // Run once at startup
+                        IpUpdater.SetUpTimer();
 
-                    // Attach a context menu.
-                    MenuGenerator.ContextMenus.RegenerateMenu();
+                        // Attach a context menu.
+                        MenuGenerator.ContextMenus.RegenerateMenu();
 
-                    // Make sure the application runs!
-                    Application.Run();
+                        if (runHashTest)
+                        {
+                            //==============================================================
+                            // TEST Hash a file. The value should always be the same
+                            // otherwise something went wrong with the implementation.
+
+                            // Create dummy file
+                            const string data = "Hello, world!";
+                            const string name = "test.bin";
+                            System.IO.File.WriteAllText(name, data);
+                            // Hash it
+                            UniqueFile result = new UniqueFile(name);
+                            Log.WriteLine("Hash of test file: " + result.GetHashAsString());
+
+                            if (result.GetHashAsString() == "B5DA441CFE72AE042EF4D2B17742907F675DE4DA57462D4C3609C2E2ED755970")
+                            {
+                                Log.WriteLine("Test Sucessful");
+                            }
+                            else
+                            {
+                                Log.WriteLine("Shit.");
+                            }
+
+                            if (System.IO.File.Exists(name))
+                            {
+                                System.IO.File.Delete(name);
+                            }
+                        }
+
+                        System.Windows.Forms.Application.Run();
+                    }
+                    else
+                    {
+                        BenchmarkDotNet.Reports.Summary summary = BenchmarkDotNet.Running.BenchmarkRunner.Run<Md5VsSha256VsBlake2>();
+                        //var summary = BenchmarkRunner.Run<Blake2pVsBlake2s>();
+
+                        //Log.WriteLine(summary.ToString());
+                        //==============================================================
+                        // Make sure the application runs!
+                    }
                 }
             }
             finally
             {
-                if (mutex != null)
-                {
-                    mutex.Close();
-                    mutex = null;
-                }
+                mutex.Close();
+                mutex = null;
             }
         }
 
-        private class CPUStats
-        {
-            public static float currentCPUUsage;
-            protected static PerformanceCounter cpuCounter;
-            protected static PerformanceCounter ramCounter;
-            private static List<float> AvailableCPU = new List<float>();
-            private static List<float> AvailableRAM = new List<float>();
-            private static int cores = 0;
-            private static List<PerformanceCounter> cpuCounters = new List<PerformanceCounter>();
-
-            public static void ConsumeCPU()
-            {
-                int percentage = 60;
-                if (percentage < 0 || percentage > 100) //-V3022
-                    throw new ArgumentException("percentage");
-                Stopwatch watch = new Stopwatch();
-                watch.Start();
-                while (true)
-                {
-                    // Make the loop go on for "percentage" milliseconds then sleep the remaining
-                    // percentage milliseconds. So 40% utilization means work 40ms and sleep 60ms
-                    if (watch.ElapsedMilliseconds > percentage)
-                    {
-                        Thread.Sleep(100 - percentage);
-                        watch.Reset();
-                        watch.Start();
-                    }
-                }
-            }
-
-            public static void TimerElapsed(object source, ElapsedEventArgs e)
-            {
-                float cpu = cpuCounter.NextValue();
-                float sum = 0;
-                foreach (PerformanceCounter c in cpuCounters)
-                {
-                    sum = sum + c.NextValue();
-                }
-                sum = sum / (cores);
-                float ram = ramCounter.NextValue();
-                Console.WriteLine(string.Format("CPU Value 1: {0}, cpu value 2: {1} ,ram value: {2}", sum, cpu, ram));
-                AvailableCPU.Add(sum);
-                AvailableRAM.Add(ram);
-                currentCPUUsage = sum;
-            }
-
-            private static void Main(string[] args)
-            {
-                cpuCounter = new PerformanceCounter();
-                cpuCounter.CategoryName = "Processor";
-                cpuCounter.CounterName = "% Processor Time";
-                cpuCounter.InstanceName = "_Total";
-
-                foreach (var item in new System.Management.ManagementObjectSearcher("Select * from Win32_Processor").Get())
-                {
-                    cores = cores + int.Parse(item["NumberOfCores"].ToString());
-                }
-
-                ramCounter = new PerformanceCounter("Memory", "Available MBytes");
-
-                int procCount = System.Environment.ProcessorCount;
-                for (int i = 0; i < procCount; i++)
-                {
-                    System.Diagnostics.PerformanceCounter pc = new System.Diagnostics.PerformanceCounter("Processor", "% Processor Time", i.ToString());
-                    cpuCounters.Add(pc);
-                }
-
-                Thread c = new Thread(ConsumeCPU);
-                c.IsBackground = true;
-                c.Start();
-
-                try
-                {
-                    System.Timers.Timer t = new System.Timers.Timer(1200);
-                    t.Elapsed += new ElapsedEventHandler(TimerElapsed);
-                    t.Start();
-                    Thread.Sleep(10000);
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler(e);
-                }
-                Console.ReadLine();
-            }
-        }
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern bool ShowWindow(System.IntPtr hWnd, int nCmdShow);
     }
 }
