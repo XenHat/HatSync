@@ -88,7 +88,7 @@ namespace HatSync
     //internal static partial class Program
     internal static class Program
     {
-        public static bool IsTimerRunning = false;
+        public static bool IsTimerRunning;
         private static readonly string ProductName = ((System.Reflection.AssemblyProductAttribute)System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyProductAttribute), true)[0]).Product;
 
         /// <summary>
