@@ -99,7 +99,7 @@ namespace HatSync
             }
         }
 
-        private class Creds
+        private static class Creds
         {
             public static string FromPassword = Properties.Settings.Default.EmailPass;
 
