@@ -6,7 +6,7 @@ using System.Net.Mail;
 
 namespace HatSync
 {
-    internal class EmailSender
+    internal static class EmailSender
     {
         // TODO: Replace with a message to a mail server to queue e-mail for provided user ID
         internal static void SendEmail(bool forced = false)
