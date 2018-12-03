@@ -273,6 +273,10 @@ namespace HatSync
 
                             CachedValues.CachedExternalIpAddressv4 = address;
                             break;
+
+                        default:
+                            // Do nothing. Security wants this.
+                            break;
                     }
                 }
             }
