@@ -349,7 +349,8 @@ namespace HatSync
         private static void OnTimedIpUpdaterEvent(object sender, System.Timers.ElapsedEventArgs e)
         {
             // Make static analyzer happy; removing 'sender' here would break the call.
-            if (sender != null)
+            // We'll also do something with the time stored inside 'e' later.
+            if (sender != null && e != null)
             {
                 CheckAndSendEmail();
             }

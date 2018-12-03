@@ -115,7 +115,7 @@ namespace HatSync
         private static void OnTimedEvent(object sender, System.Timers.ElapsedEventArgs e)
         {
             // Make static analyzer happy; removing 'sender' here would break the call.
-            if (sender != null)
+            if (sender != null && e != null)
             {
                 DoIdleTasks();
             }
