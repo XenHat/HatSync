@@ -104,9 +104,6 @@ namespace HatSync
             item.Value.Image = Properties.Resources.Exit;
             item.Value.Click += delegate (object sender, System.EventArgs e) { Exit_Click(sender, e); };
             Program.STrayIcon.ContextMenuStrip.Items.Add(item.Value);
-
-            //System.GC.Collect();
-            //System.GC.WaitForFullGCComplete();
         }
 
         /// <summary>
