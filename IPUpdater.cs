@@ -162,7 +162,11 @@ namespace HatSync
             while (true) { /*no-op*/}
         }
 
-        public static void SetUpTimer(bool retry = false)
+        public static void SetUpTimer()
+        {
+            SetUpTimer(false);
+        }
+        public static void SetUpTimer(bool retry)
         {
             if (!_alreadyStarted || retry)
             {
