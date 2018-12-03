@@ -173,15 +173,6 @@ namespace HatSync
         {
             SimpleHasher.HashFolder(System.IO.Path.GetPathRoot(System.Environment.SystemDirectory));
         }
-
-        // This method handles the Closing event. The ToolStripDropDown control is not allowed to
-        // close unless the Done menu item is clicked or the Close method is called explicitly. The
-        // Done menu item is enabled only after both of the other menu items have been selected.
-        private static void ContextMenuStrip_Closing(
-            object sender, System.Windows.Forms.ToolStripDropDownClosingEventArgs e)
-        {
-            // TODO: Document or remove.
-        }
     }
 
     internal class MyXmlReader : System.Xml.XmlTextReader
