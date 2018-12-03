@@ -53,7 +53,7 @@ namespace HatSync
                 }
 
                 Program.STrayIcon.ContextMenuStrip.Items.Add(loopItem);
-            };
+            }
 
             TrackedToolStripMenuItem item = null;
 
