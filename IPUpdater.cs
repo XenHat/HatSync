@@ -280,10 +280,6 @@ namespace HatSync
                     }
                 }
             }
-            // Double-check if the saved value is correct. Something seems to be acting strange.
-            //Log.WriteLine("Properties.Settings.Default.LastIPv6 = " + Properties.Settings.Default.LastIPv6);
-            //Log.WriteLine("CachedValues.CachedExternalIPAddressv6 = " + CachedValues.CachedExternalIPAddressv6.ToString());
-            //Log.WriteLine("Saving settings...");
             if (changed)
             {
                 Properties.Settings.Default.LastIPv4 = CachedValues.CachedExternalIpAddressv4?.ToString();
