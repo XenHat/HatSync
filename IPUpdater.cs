@@ -11,10 +11,15 @@ namespace HatSync
 {
     public class CachedValues
     {
-        public static System.Net.IPAddress CachedExternalIpAddressv4;
-        public static System.Net.IPAddress CachedExternalIpAddressv6;
-        public static System.Net.IPAddress PreviousExternalIpAddressv4;
-        public static System.Net.IPAddress PreviousExternalIpAddressv6;
+        private static IPAddress cachedExternalIpAddressv4;
+        private static IPAddress cachedExternalIpAddressv6;
+        private static IPAddress previousExternalIpAddressv4;
+        private static IPAddress previousExternalIpAddressv6;
+
+        public static IPAddress CachedExternalIpAddressv4 { get => cachedExternalIpAddressv4; set => cachedExternalIpAddressv4 = value; }
+        public static IPAddress CachedExternalIpAddressv6 { get => cachedExternalIpAddressv6; set => cachedExternalIpAddressv6 = value; }
+        public static IPAddress PreviousExternalIpAddressv4 { get => previousExternalIpAddressv4; set => previousExternalIpAddressv4 = value; }
+        public static IPAddress PreviousExternalIpAddressv6 { get => previousExternalIpAddressv6; set => previousExternalIpAddressv6 = value; }
 
         public static IEnumerable<IPAddress> GetCachedIPs()
         {
