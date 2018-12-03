@@ -127,8 +127,8 @@ namespace HatSync
                 //}
                 //item.Dispose();
 
-                System.GC.Collect();
-                System.GC.WaitForFullGCComplete();
+                //System.GC.Collect();
+                //System.GC.WaitForFullGCComplete();
             }
 
             /// <summary>
