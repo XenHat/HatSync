@@ -62,7 +62,7 @@ namespace HatSync
     internal class CompareHashingMethods
     {
         //[Benchmark]
-        protected void Main()
+        protected static void Main()
         {
             Log.WriteLine("Running Hashing benchmark");
             SimpleHasher.DoHashFileDirect(@"C:\test\blob1");
