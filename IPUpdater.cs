@@ -305,6 +305,7 @@ namespace HatSync
             return changed;
         }
 
+#if DEBUG
         private static System.Collections.Generic.HashSet<IPAddress> GetNewIpsFromLocalAdapters()
         {
             System.Collections.Generic.HashSet<System.Net.IPAddress> returnValue = new System.Collections.Generic.HashSet<System.Net.IPAddress>();
@@ -343,6 +344,7 @@ namespace HatSync
             }
             return returnValue;
         }
+#endif
 
         // I don't know how to remove this method and pass CheckAndSendEmail() directly.
         private static void OnTimedIpUpdaterEvent(object source, System.Timers.ElapsedEventArgs e)
