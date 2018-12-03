@@ -284,6 +284,7 @@ namespace HatSync
 
                         default:
                             // Do nothing. Security wants this.
+                            throw new NotSupportedException();
                             break;
                     }
                 }
