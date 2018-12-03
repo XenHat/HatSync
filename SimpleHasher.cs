@@ -135,7 +135,7 @@ namespace HatSync
             try
             {
 
-                var folders = Enumerator.GetAllFilesFromFolder(folder, true);
+                var folders = EnumerationIOUtility.GetAllFilesFromFolder(folder, true);
                 foreach (var file in folders)
                 {
                     //Log.WriteLine("Processing " + file);

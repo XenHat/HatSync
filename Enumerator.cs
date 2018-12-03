@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HatSync
 {
-    class Enumerator
+    class EnumerationIOUtility
     {
         public static IEnumerable<string> GetAllFilesFromFolder(string root, bool searchSubfolders)
         {
