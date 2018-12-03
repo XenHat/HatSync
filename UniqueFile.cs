@@ -12,7 +12,10 @@ namespace HatSync
     /// by basically any value (hash, file name, size, etc)
     /// </summary>
     ///
-    internal class UniqueFile : IEquatable<UniqueFile>
+    internal class UniqueFile
+#if false
+        : IEquatable<UniqueFile>
+#endif
     {
         public UniqueFile(string a)
         {
@@ -37,11 +40,12 @@ namespace HatSync
 
         public string Name => _name;
 
+
         public string GetHashAsString()
         {
             return SimpleHasher.ByteArrayToString(_hash);
         }
-
+#if false
         public override int GetHashCode()
         {
             return base.GetHashCode();
@@ -53,6 +57,13 @@ namespace HatSync
         }
 
         public bool Equals(UniqueFile other)
+        {
+            return _hash == other.Hash;
+        }
+
+#endif
+        // Until I figure how to properly override GetHashCode, use this to look for duplicates
+        public bool IsDuplicateOf(UniqueFile other)
         {
             return _hash == other.Hash;
         }
