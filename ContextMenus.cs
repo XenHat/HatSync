@@ -26,8 +26,7 @@ namespace HatSync
         /// <returns>ContextMenuStrip</returns>
         private static void CreateFeedsMenu()
         {
-            // Warning: This leaves a window in which the menu doesn't exist. I'll fix that later
-            // when the leak is gone.
+            // Warning: This leaves a window in which the menu doesn't exist. I'll fix that later when the leak is gone.
             if (Program.STrayIcon.ContextMenuStrip != null)
             {
                 Program.STrayIcon.ContextMenuStrip.Dispose();
@@ -39,17 +38,12 @@ namespace HatSync
                 ShowImageMargin = true
             };
 
-            // DEBUG
-            //TrackedToolStripMenuItem item = new TrackedToolStripMenuItem();
-            //ProcessIcon.ni.ContextMenuStrip.Items.Add(item);
-
             // Regenerate a new list with the current settings.
             System.Collections.Generic.List<bool> menuItemsEnabled = new System.Collections.Generic.List<bool>();
 
             for (var i = 0; i < MenuNames.Count; i++)
             {
                 System.Windows.Forms.ToolStripMenuItem loopItem = new TrackedToolStripMenuItem().Value;
-                //ToolStripMenuItem watt = new ToolStripMenuItem();
                 loopItem.Text = MenuNames[i];
                 loopItem.Click += MenuEventsHandlers[i];
                 // TODO: Still need to avoid rebuilding the menu every time the menu changes
@@ -68,8 +62,6 @@ namespace HatSync
             {
                 item = new TrackedToolStripMenuItem();
                 item.Value.Text = CachedValues.CachedExternalIpAddressv6.ToString();
-                //item.Value.Image = HatSync.Properties.Resources.About;
-                //item.Value.Click += delegate (object sender, EventArgs e) { About_Click(sender, e); };
                 item.Value.Enabled = false;
                 Program.STrayIcon.ContextMenuStrip.Items.Add(item.Value);
             }
@@ -77,27 +69,21 @@ namespace HatSync
             {
                 item = new TrackedToolStripMenuItem();
                 item.Value.Text = CachedValues.CachedExternalIpAddressv4.ToString();
-                //item.Value.Image = HatSync.Properties.Resources.About;
-                //item.Value.Click += delegate (object sender, EventArgs e) { About_Click(sender, e); };
                 item.Value.Enabled = false;
                 Program.STrayIcon.ContextMenuStrip.Items.Add(item.Value);
             }
 
-            // WOAH, this creates a memory leak!
-            //sTrayIcon.ContextMenuStrip.Items.Add(new ToolStripSeparator()); // Separator.
             Program.STrayIcon.ContextMenuStrip.Items.Add(SSeparator);
 
             // The actual menu begins here
 
             item = new TrackedToolStripMenuItem();
             item.Value.Text = "[TEST] Hash Desktop folder";
-            //item.Value.Image = HatSync.Properties.Resources.Rss;
             item.Value.Click += delegate (object sender, System.EventArgs e) { HashTest1_Click(sender, e); };
             Program.STrayIcon.ContextMenuStrip.Items.Add(item.Value);
 
             item = new TrackedToolStripMenuItem();
             item.Value.Text = "[TEST] Hash C:\\";
-            //item.Value.Image = HatSync.Properties.Resources.Rss;
             item.Value.Click += delegate (object sender, System.EventArgs e) { HashTest2_Click(sender, e); };
             Program.STrayIcon.ContextMenuStrip.Items.Add(item.Value);
 
@@ -118,12 +104,6 @@ namespace HatSync
             item.Value.Image = Properties.Resources.Exit;
             item.Value.Click += delegate (object sender, System.EventArgs e) { Exit_Click(sender, e); };
             Program.STrayIcon.ContextMenuStrip.Items.Add(item.Value);
-            // end ----------------------------------------------------------------------------------
-            //if (sTrayIcon.ContextMenuStrip != null)
-            //{
-            //    sTrayIcon.ContextMenuStrip.Dispose();
-            //}
-            //item.Dispose();
 
             //System.GC.Collect();
             //System.GC.WaitForFullGCComplete();
