@@ -42,44 +42,44 @@ namespace HatSync
             // This means that client discovery is done entirely by the client
             // itself and no external storage is needed.
             // GOOD LUCK FUTURE ME.
-            if (null != CachedValues.CachedExternalIpAddressv6 && null != CachedValues.PreviousExternalIpAddressv6)
+            if (null != IPUpdater.CachedValues.CachedExternalIpAddressv6 && null != IPUpdater.CachedValues.PreviousExternalIpAddressv6)
             {// IP existed
-                if (CachedValues.PreviousExternalIpAddressv6.Equals(CachedValues.CachedExternalIpAddressv6))
+                if (IPUpdater.CachedValues.PreviousExternalIpAddressv6.Equals(IPUpdater.CachedValues.CachedExternalIpAddressv6))
                 {// Value changed
-                    newBody = "New IPv6 Address: " + CachedValues.CachedExternalIpAddressv6 + " (was " + CachedValues.CachedExternalIpAddressv6 + ")";
+                    newBody = "New IPv6 Address: " + IPUpdater.CachedValues.CachedExternalIpAddressv6 + " (was " + IPUpdater.CachedValues.CachedExternalIpAddressv6 + ")";
                 }
                 else
                 {// Value is the same
-                    newBody = "IPv6 Address (no change): " + CachedValues.CachedExternalIpAddressv6;
+                    newBody = "IPv6 Address (no change): " + IPUpdater.CachedValues.CachedExternalIpAddressv6;
                 }
             }
-            else if (null == CachedValues.PreviousExternalIpAddressv6 && null != CachedValues.CachedExternalIpAddressv6)
+            else if (null == IPUpdater.CachedValues.PreviousExternalIpAddressv6 && null != IPUpdater.CachedValues.CachedExternalIpAddressv6)
             {
                 // IP didn't exist and was added
-                newBody = "IPv6 Address (added): " + CachedValues.CachedExternalIpAddressv6;
+                newBody = "IPv6 Address (added): " + IPUpdater.CachedValues.CachedExternalIpAddressv6;
             }
-            else if (null == CachedValues.CachedExternalIpAddressv6 && null == CachedValues.PreviousExternalIpAddressv6)
+            else if (null == IPUpdater.CachedValues.CachedExternalIpAddressv6 && null == IPUpdater.CachedValues.PreviousExternalIpAddressv6)
             {
                 // IP disappeared!
                 newBody = "IPv6 Address has been unassigned";
             }
-            if (null != CachedValues.CachedExternalIpAddressv4 && null != CachedValues.PreviousExternalIpAddressv4)
+            if (null != IPUpdater.CachedValues.CachedExternalIpAddressv4 && null != IPUpdater.CachedValues.PreviousExternalIpAddressv4)
             {// IP existed
-                if (CachedValues.PreviousExternalIpAddressv4.Equals(CachedValues.CachedExternalIpAddressv4))
+                if (IPUpdater.CachedValues.PreviousExternalIpAddressv4.Equals(IPUpdater.CachedValues.CachedExternalIpAddressv4))
                 {// Value changed
-                    newBody = "New IPv4 Address: " + CachedValues.CachedExternalIpAddressv4 + " (was " + CachedValues.CachedExternalIpAddressv4 + ")";
+                    newBody = "New IPv4 Address: " + IPUpdater.CachedValues.CachedExternalIpAddressv4 + " (was " + IPUpdater.CachedValues.CachedExternalIpAddressv4 + ")";
                 }
                 else
                 {// Value is the same
-                    newBody = "IPv4 Address (no change): " + CachedValues.CachedExternalIpAddressv4;
+                    newBody = "IPv4 Address (no change): " + IPUpdater.CachedValues.CachedExternalIpAddressv4;
                 }
             }
-            else if (null == CachedValues.PreviousExternalIpAddressv4 && null != CachedValues.CachedExternalIpAddressv4)
+            else if (null == IPUpdater.CachedValues.PreviousExternalIpAddressv4 && null != IPUpdater.CachedValues.CachedExternalIpAddressv4)
             {
                 // IP didn't exist and was added
-                newBody = "IPv4 Address (added): " + CachedValues.CachedExternalIpAddressv4;
+                newBody = "IPv4 Address (added): " + IPUpdater.CachedValues.CachedExternalIpAddressv4;
             }
-            else if (null == CachedValues.CachedExternalIpAddressv4 && null == CachedValues.PreviousExternalIpAddressv4)
+            else if (null == IPUpdater.CachedValues.CachedExternalIpAddressv4 && null == IPUpdater.CachedValues.PreviousExternalIpAddressv4)
             {
                 // IP disappeared!
                 newBody = "IPv4 Address has been unassigned";

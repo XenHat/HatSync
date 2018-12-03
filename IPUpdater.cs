@@ -9,26 +9,26 @@ using System.Threading.Tasks;
 
 namespace HatSync
 {
-    public class CachedValues
+    public class IPUpdater
     {
-        private static IPAddress cachedExternalIpAddressv4;
-        private static IPAddress cachedExternalIpAddressv6;
-        private static IPAddress previousExternalIpAddressv4;
-        private static IPAddress previousExternalIpAddressv6;
-
-        public static IPAddress CachedExternalIpAddressv4 { get => cachedExternalIpAddressv4; set => cachedExternalIpAddressv4 = value; }
-        public static IPAddress CachedExternalIpAddressv6 { get => cachedExternalIpAddressv6; set => cachedExternalIpAddressv6 = value; }
-        public static IPAddress PreviousExternalIpAddressv4 { get => previousExternalIpAddressv4; set => previousExternalIpAddressv4 = value; }
-        public static IPAddress PreviousExternalIpAddressv6 { get => previousExternalIpAddressv6; set => previousExternalIpAddressv6 = value; }
-
-        public static IEnumerable<IPAddress> GetCachedIPs()
+        public class CachedValues
         {
-            return new System.Collections.Generic.HashSet<System.Net.IPAddress> { CachedExternalIpAddressv4, CachedExternalIpAddressv6 };
-        }
-    }
+            private static IPAddress cachedExternalIpAddressv4;
+            private static IPAddress cachedExternalIpAddressv6;
+            private static IPAddress previousExternalIpAddressv4;
+            private static IPAddress previousExternalIpAddressv6;
 
-    internal class IpUpdater
-    {
+            public static IPAddress CachedExternalIpAddressv4 { get => cachedExternalIpAddressv4; set => cachedExternalIpAddressv4 = value; }
+            public static IPAddress CachedExternalIpAddressv6 { get => cachedExternalIpAddressv6; set => cachedExternalIpAddressv6 = value; }
+            public static IPAddress PreviousExternalIpAddressv4 { get => previousExternalIpAddressv4; set => previousExternalIpAddressv4 = value; }
+            public static IPAddress PreviousExternalIpAddressv6 { get => previousExternalIpAddressv6; set => previousExternalIpAddressv6 = value; }
+
+            public static IEnumerable<IPAddress> GetCachedIPs()
+            {
+                return new System.Collections.Generic.HashSet<System.Net.IPAddress> { CachedExternalIpAddressv4, CachedExternalIpAddressv6 };
+            }
+        }
+
         public static void CheckAndSendEmail(bool forceSend = false)
         {
             if (forceSend)
@@ -380,3 +380,4 @@ namespace HatSync
         }
     }
 }
+

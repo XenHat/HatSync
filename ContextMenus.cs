@@ -58,17 +58,17 @@ namespace HatSync
             TrackedToolStripMenuItem item = null;
 
             // Add IPs there for fun.
-            if (CachedValues.CachedExternalIpAddressv6 != null)
+            if (IPUpdater.CachedValues.CachedExternalIpAddressv6 != null)
             {
                 item = new TrackedToolStripMenuItem();
-                item.Value.Text = CachedValues.CachedExternalIpAddressv6.ToString();
+                item.Value.Text = IPUpdater.CachedValues.CachedExternalIpAddressv6.ToString();
                 item.Value.Enabled = false;
                 Program.STrayIcon.ContextMenuStrip.Items.Add(item.Value);
             }
-            if (CachedValues.CachedExternalIpAddressv4 != null)
+            if (IPUpdater.CachedValues.CachedExternalIpAddressv4 != null)
             {
                 item = new TrackedToolStripMenuItem();
-                item.Value.Text = CachedValues.CachedExternalIpAddressv4.ToString();
+                item.Value.Text = IPUpdater.CachedValues.CachedExternalIpAddressv4.ToString();
                 item.Value.Enabled = false;
                 Program.STrayIcon.ContextMenuStrip.Items.Add(item.Value);
             }
@@ -118,7 +118,7 @@ namespace HatSync
         /// </param>
         private static void ForceIPUpdate_Click(object sender, System.EventArgs e)
         {
-            IpUpdater.CheckAndSendEmail(true);
+            IPUpdater.CheckAndSendEmail(true);
         }
 
         public static void RegenerateMenu()

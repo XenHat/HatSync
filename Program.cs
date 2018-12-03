@@ -213,7 +213,7 @@ namespace HatSync
                         STrayIcon.Visible = true;
 
                         // Run once at startup
-                        IpUpdater.SetUpTimer();
+                        IPUpdater.SetUpTimer();
 
                         // Attach a context menu.
                         MenuGenerator.RegenerateMenu();
