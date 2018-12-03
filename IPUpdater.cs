@@ -11,12 +11,14 @@ namespace HatSync
 {
     public class IPUpdater
     {
+        private static readonly string FetchURLv4 = "http://ifconfig.me/ip";
+        private static readonly string FetchURLv6 = "https://ipv6.icanhazip.com"; // TODO: Find a better one.
         public class CachedValues
         {
-            public static IPAddress CachedExternalIpAddressv4 { get; set;}
-            public static IPAddress CachedExternalIpAddressv6 { get; set; }
-            public static IPAddress PreviousExternalIpAddressv4 { get; set; }
-            public static IPAddress PreviousExternalIpAddressv6 { get; set; }
+            public static IPAddress CachedExternalIpAddressv4;
+            public static IPAddress CachedExternalIpAddressv6;
+            public static IPAddress PreviousExternalIpAddressv4;
+            public static IPAddress PreviousExternalIpAddressv6;
 
             public static IEnumerable<IPAddress> GetCachedIPs()
             {
@@ -47,8 +49,6 @@ namespace HatSync
         {
             //// TODO: Use IEnumerable
             System.Collections.Generic.HashSet<System.Net.IPAddress> result = GetNewIPsFromOutside();
-            // This returns the adapter(s)' local IPs. Not what we want, but might be useful later.
-            //System.Collections.Generic.HashSet<IPAddress> result = GetNewUpsFromLocalAdapters();
             return result;
 
         }
@@ -76,7 +76,7 @@ namespace HatSync
                 try
                 {
                     Log.WriteLine("Fetching IPv6 Address...");
-                    fetchedV6 = new ImpatientWebClient().DownloadString("https://ipv6.icanhazip.com").Trim();
+                    fetchedV6 = new ImpatientWebClient().DownloadString(IPUpdater.FetchURLv6).Trim();
                 }
                 catch (System.Exception ex)
                 {
@@ -84,28 +84,17 @@ namespace HatSync
                 }
                 finally
                 {
-                    //if (v6 != null)
+                    var isValid = System.Net.IPAddress.TryParse(fetchedV6, out v6) && v6 != null;
+                    if (isValid && v6.AddressFamily != System.Net.Sockets.AddressFamily.InterNetworkV6)
                     {
-                        var isValid = System.Net.IPAddress.TryParse(fetchedV6, out v6);
-                        if (v6 != null)
-                        {
-                            if (isValid && v6.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
-                            {
-                                //Log.WriteLine("IPV6: " + v6.ToString());
-                            }
-                            else if (v6.AddressFamily != System.Net.Sockets.AddressFamily.InterNetworkV6)
-                            {
-                                // ipv6 returned an ipv4 address.
-                                // Save one lookup and use it in-place.
-                                fetchedV4 = fetchedV6;
-                                v6 = null;
-                                Log.WriteLine("Recycling returned IPv4 address...");
-                            }
-                        }
-                        else
-                        {
-                            Log.WriteLine("Fetching IPv6 failed");
-                        }
+                        // ipv6 returned an ipv4 address. Save one lookup and use it in-place.
+                        fetchedV4 = fetchedV6;
+                        v6 = null;
+                        Log.WriteLine("Recycling returned IPv4 address...");
+                    }
+                    else
+                    {
+                        Log.WriteLine("Fetching IPv6 failed");
                     }
                 }
                 if (string.IsNullOrEmpty(fetchedV4))
@@ -113,47 +102,41 @@ namespace HatSync
                     try
                     {
                         Log.WriteLine("Fetching IPv4 Address...");
-                        fetchedV4 = new ImpatientWebClient().DownloadString("https://ipv4.icanhazip.com").Trim();
+                        fetchedV4 = new ImpatientWebClient().DownloadString(IPUpdater.FetchURLv4).Trim();
                     }
                     catch (System.Exception ex)
                     {
                         Log.WriteLine("Fetching IPv4 failed");
-                        Log.WriteLine(ex.ToString());
+                        Log.WriteLine("Exception:" + ex.ToString());
                     }
                     finally
                     {
-                        if (System.Net.IPAddress.TryParse(fetchedV4, out v4))
-                        {
-                            //Log.WriteLine("V4 address passes validity checks");
-                            //Log.WriteLine("IPV4: " + v4.ToString());
-                        }
+                        Log.WriteLine("IPv4:" + fetchedV4);
                     }
                 }
 
                 System.Collections.Generic.HashSet<System.Net.IPAddress> set = new System.Collections.Generic.HashSet<System.Net.IPAddress>();
-                if (v4 != null)
+                // TODO: Better validation
+                if (IPAddress.TryParse(fetchedV4,out v4))
                 {
                     set.Add(v4);
-                    //Log.WriteLine("Stored IPv4");
                 }
-                if (v6 != null)
+                if (IPAddress.TryParse(fetchedV6, out v6))
                 {
                     set.Add(v6);
-                    //Log.WriteLine("Stored IPv6");
                 }
-                returnValue = set;
+                return set;
             }
             catch (System.Exception ex)
             {
                 Log.WriteLine(ex.ToString());
             }
-            return returnValue;
+            return null;
         }
 
         public static void Main(string[] args)
         {
             SetUpTimer();
-            // Keep running
             while (true) { /*no-op*/}
         }
 
@@ -377,7 +360,7 @@ namespace HatSync
             protected override System.Net.WebRequest GetWebRequest(System.Uri uri)
             {
                 System.Net.WebRequest w = base.GetWebRequest(uri);
-                w.Timeout = 1000 * 5; // 5 seconds
+                w.Timeout = 1000 * 10; // 5 seconds
                 return w;
             }
         }
