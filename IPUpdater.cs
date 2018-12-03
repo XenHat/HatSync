@@ -312,7 +312,6 @@ namespace HatSync
             try
             {
                 // Get 'IPHostEntry' object containing information like host name, IP addresses, aliases for a host.
-                //IPHostEntry hostInfo = Dns.GetHostByName(System.Environment.MachineName);
                 IPAddress local = IPAddress.Parse("127.0.0.1");
                 IPHostEntry hostInfo = Dns.GetHostEntry(local);
                 Log.WriteLine("Host name : " + hostInfo.HostName);
