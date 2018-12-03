@@ -125,7 +125,6 @@ namespace HatSync
                 var folders = EnumerationIOUtility.GetAllFilesFromFolder(folder, true);
                 foreach (var file in folders)
                 {
-                    //Log.WriteLine("Processing " + file);
                     UniqueFile tentative = new UniqueFile(file);
 
                     if (tentative.Hash != null)
@@ -141,8 +140,6 @@ namespace HatSync
             }
 
             Log.WriteLine("Finished hashing " + folder);
-            //GC.Collect();
-
             return files;
         }
 

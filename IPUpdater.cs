@@ -224,8 +224,6 @@ namespace HatSync
         private static bool CheckIpChange(/*bool forced = false*/)
         {
             IEnumerable<IPAddress> cachedIps = CachedValues.GetCachedIPs();
-            //Log.WriteLine("Cached IPs:" + String.Join(",",cached_ips));
-            // TODO: Compares hashed lists instead of creating these
             System.Collections.Generic.HashSet<System.Net.IPAddress> newIps = GetNewIPs();
             if (newIps == null)
             {
@@ -254,7 +252,6 @@ namespace HatSync
                 Log.WriteLine("Fetched IPs:" + string.Join(",", newIps));
                 foreach (System.Net.IPAddress address in newIps)
                 {
-                    //Log.WriteLine("Processing " + address.ToString());
                     switch (address.AddressFamily)
                     {
                         case System.Net.Sockets.AddressFamily.InterNetworkV6:
@@ -305,8 +302,6 @@ namespace HatSync
                 Properties.Settings.Default.LastIPv6 = CachedValues.GetCachedExternalIpAddressv6()?.ToString();
                 Properties.Settings.Default.Save();
             }
-            //Log.WriteLine("Properties.Settings.Default.LastIPv6 = " + Properties.Settings.Default.LastIPv6);
-            //Log.WriteLine("CachedValues.CachedExternalIPAddressv6 = " + CachedValues.CachedExternalIPAddressv6.ToString());
             return changed;
         }
 
