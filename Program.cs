@@ -98,9 +98,10 @@ namespace HatSync
         private static void DoIdleTasks()
         {
             // Do not run sendemail here, it has its own timer.
-            //IPUpdater.SendEmail();
+            // Will be used later however.
         }
 
+        // TODO: Use?
         private static void ExceptionHandler(System.Exception exception)
         {
             // Meep.
@@ -145,12 +146,6 @@ namespace HatSync
             CharSet = System.Runtime.InteropServices.CharSet.Auto,
             CallingConvention = System.Runtime.InteropServices.CallingConvention.StdCall)]
         private static extern int AllocConsole();
-
-        private static void ConsoleMain()
-        {
-            Log.WriteLine("HI FROM CONSOLEMAIN");
-            //throw new NotImplementedException();
-        }
 
         [System.Runtime.InteropServices.DllImport("kernel32.dll",
            EntryPoint = "GetStdHandle",
@@ -206,13 +201,11 @@ namespace HatSync
                     {
                         // Show the system tray icon.
                         System.Windows.Forms.Application.EnableVisualStyles();
-                        //Application.SetCompatibleTextRenderingDefault(true);
 
                         System.Timers.Timer aTimer = new System.Timers.Timer();
                         aTimer.Elapsed += OnTimedEvent;
                         aTimer.Interval = 1000 * 7200; // 120 minutes
                         aTimer.Enabled = true;
-                        System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
 
                         // Put the icon in the system tray
                         STrayIcon.Icon = Properties.Resources.HatSync;
@@ -258,12 +251,7 @@ namespace HatSync
                     }
                     else
                     {
-                        BenchmarkDotNet.Reports.Summary summary = BenchmarkDotNet.Running.BenchmarkRunner.Run<Md5VsSha256VsBlake2>();
-                        //var summary = BenchmarkRunner.Run<Blake2pVsBlake2s>();
-
-                        //Log.WriteLine(summary.ToString());
-                        //==============================================================
-                        // Make sure the application runs!
+                        BenchmarkDotNet.Running.BenchmarkRunner.Run<Md5VsSha256VsBlake2>();
                     }
                 }
             }
