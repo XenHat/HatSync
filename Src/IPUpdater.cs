@@ -102,8 +102,6 @@ namespace HatSync
             var fetchedV6 = "";
             Log.WriteLine("Fetching IPv6 Address...");
             // FIXME: This throws exceptions three times every call...
-            //var result = new ImpatientWebClient().DownloadString(IPUpdater.FetchURLv6);
-            //fetchedV6 = result.Trim();
             fetchedV6 = ImpatientStringDownloader.GetText(FetchURLv6);
             var isValid = System.Net.IPAddress.TryParse(fetchedV6, out v6) && v6 != null;
             if (isValid && v6.AddressFamily != System.Net.Sockets.AddressFamily.InterNetworkV6)
