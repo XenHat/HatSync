@@ -5,12 +5,33 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace HatSync
 {
 
     internal static class SimpleHasher
     {
+        public static class GetHashAsync
+        {
+            private static byte[] lastHash;
+
+            public static byte[] Go(string file)
+            {
+                DoWork(file);
+                return lastHash;
+            }
+
+            private static async void DoWork(string file)
+            {
+                await Task.Run(() => GetHash(file));
+            }
+
+            private static void GetHash(string file)
+            {
+                lastHash = DoHashFileDirect(file);
+            }
+        }
         public static string ByteArrayToString(byte[] ba)
         {
             return BitConverter.ToString(ba).Replace("-", "");

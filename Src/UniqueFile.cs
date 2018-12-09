@@ -26,7 +26,7 @@ namespace HatSync
             {
                 _fullpath = a;
                 _name = Path.GetFileName(_fullpath);
-                _hash = SimpleHasher.DoHashFileDirect(_fullpath);
+                _hash = SimpleHasher.GetHashAsync.Go(_fullpath);
             }
             catch (Exception ex)
             {

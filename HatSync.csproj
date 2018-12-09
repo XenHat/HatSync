@@ -60,6 +60,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LiteDB, Version=4.1.4.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
+      <HintPath>packages\LiteDB.4.1.4\lib\net40\LiteDB.dll</HintPath>
+    </Reference>
     <Reference Include="SauceControl.Blake2Fast, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\SauceControl.Blake2Fast.0.2.0\lib\net45\SauceControl.Blake2Fast.dll</HintPath>
     </Reference>
