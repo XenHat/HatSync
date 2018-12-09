@@ -253,10 +253,12 @@ namespace HatSync
 
                         System.Windows.Forms.Application.Run();
                     }
+#if USE_BENCHMARKDOTNET
                     else
                     {
                         BenchmarkDotNet.Running.BenchmarkRunner.Run<Md5VsSha256VsBlake2>();
                     }
+#endif
                 }
             }
             finally

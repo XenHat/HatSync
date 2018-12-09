@@ -2,6 +2,7 @@
 
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
+#if USE_BENCHMARKDOTNET
 namespace HatSync
 {
     [BenchmarkDotNet.Attributes.ClrJob(true)]
@@ -99,3 +100,4 @@ namespace HatSync
         private readonly System.Security.Cryptography.SHA256 _sha256 = System.Security.Cryptography.SHA256.Create();
     }
 }
+#endif
