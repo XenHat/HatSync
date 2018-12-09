@@ -160,9 +160,8 @@ namespace HatSync
         }
         public static void Main(string[] args)
         {
+            Debug.WriteLine("Called IPUpdater.Main()");
             // Don't do anything on initialization, this could lead to redundant calls.
-            //SetUpTimer();
-            //while (true) { /*no-op*/}
         }
 
         public static void SetUpTimer()
