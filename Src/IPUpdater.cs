@@ -4,7 +4,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
+using System.Net.Cache;
+using System.Security.Permissions;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace HatSync
@@ -80,87 +84,87 @@ namespace HatSync
 
         private static System.Collections.Generic.HashSet<System.Net.IPAddress> GetNewPublicIPs()
         {
+            Debug.WriteLine("Called GetNewPublicIPs()");
             // Requires internet. Makes sense since you can't get an INTERNET address without it.
             // TODO: Make sure the client works fine without these. It can and will happen.
+            System.Net.IPAddress v6 = null;
+            System.Net.IPAddress v4 = null;
             try
             {
-                System.Net.IPAddress v6 = null;
-                System.Net.IPAddress v4 = null;
-                try
-                {
-                    System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
-                }
-                catch (System.Exception ex)
-                {
-                    Log.WriteLine(ex.ToString());
-                }
-                var fetchedV4 = "";
-                var fetchedV6 = "";
-                try
-                {
-                    Log.WriteLine("Fetching IPv6 Address...");
-                    fetchedV6 = new ImpatientWebClient().DownloadString(IPUpdater.FetchURLv6).Trim();
-                }
-                catch (System.Exception ex)
-                {
-                    Log.WriteLine(ex.ToString());
-                }
-                finally
-                {
-                    var isValid = System.Net.IPAddress.TryParse(fetchedV6, out v6) && v6 != null;
-                    if (isValid && v6.AddressFamily != System.Net.Sockets.AddressFamily.InterNetworkV6)
-                    {
-                        // ipv6 returned an ipv4 address. Save one lookup and use it in-place.
-                        fetchedV4 = fetchedV6;
-                        v6 = null;
-                        Log.WriteLine("Recycling returned IPv4 address...");
-                    }
-                    else
-                    {
-                        Log.WriteLine("Fetching IPv6 failed");
-                    }
-                }
-                if (string.IsNullOrEmpty(fetchedV4))
-                {
-                    try
-                    {
-                        Log.WriteLine("Fetching IPv4 Address...");
-                        fetchedV4 = new ImpatientWebClient().DownloadString(IPUpdater.FetchURLv4).Trim();
-                    }
-                    catch (System.Exception ex)
-                    {
-                        Log.WriteLine("Fetching IPv4 failed");
-                        Log.WriteLine("Exception:" + ex);
-                    }
-                    finally
-                    {
-                        Log.WriteLine("IPv4:" + fetchedV4);
-                    }
-                }
-
-                System.Collections.Generic.HashSet<System.Net.IPAddress> set = new System.Collections.Generic.HashSet<System.Net.IPAddress>();
-                // TODO: Better validation
-                if (IPAddress.TryParse(fetchedV4,out v4))
-                {
-                    set.Add(v4);
-                }
-                if (IPAddress.TryParse(fetchedV6, out v6))
-                {
-                    set.Add(v6);
-                }
-                return set;
+                System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType) 3072;
             }
             catch (System.Exception ex)
             {
                 Log.WriteLine(ex.ToString());
             }
-            return null;
+
+            var fetchedV4 = "";
+            var fetchedV6 = "";
+            Log.WriteLine("Fetching IPv6 Address...");
+            // FIXME: This throws exceptions three times every call...
+            //var result = new ImpatientWebClient().DownloadString(IPUpdater.FetchURLv6);
+            //fetchedV6 = result.Trim();
+            fetchedV6 = ImpatientStringDownloader.GetText(FetchURLv6);
+            var isValid = System.Net.IPAddress.TryParse(fetchedV6, out v6) && v6 != null;
+            if (isValid && v6.AddressFamily != System.Net.Sockets.AddressFamily.InterNetworkV6)
+            {
+                // ipv6 returned an ipv4 address. Save one lookup and use it in-place.
+                fetchedV4 = fetchedV6;
+                v6 = null;
+                Log.WriteLine("Recycling returned IPv4 address...");
+            }
+            else
+            {
+                Log.WriteLine("Fetching IPv6 failed");
+            }
+
+            if (string.IsNullOrEmpty(fetchedV4))
+            {
+                try
+                {
+                    Log.WriteLine("Fetching IPv4 Address...");
+                    var result = ImpatientStringDownloader.GetText(FetchURLv4);
+                    fetchedV4 = result.Trim();
+                }
+                catch (System.Exception ex)
+                {
+                    Log.WriteLine("Fetching IPv4 failed");
+                    Log.WriteLine("Exception:" + ex);
+                }
+                finally
+                {
+                    Log.WriteLine("IPv4:" + fetchedV4);
+                }
+            }
+
+            System.Collections.Generic.HashSet<System.Net.IPAddress> set =
+                new System.Collections.Generic.HashSet<System.Net.IPAddress>();
+            // TODO: Better validation
+            if (IPAddress.TryParse(fetchedV4, out v4))
+            {
+                set.Add(v4);
+            }
+
+            if (IPAddress.TryParse(fetchedV6, out v6))
+            {
+                set.Add(v6);
+            }
+
+            return set;
         }
 
+        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
+        public static void Init()
+        {
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            currentDomain.UnhandledException += Log.HandleException;
+            SetUpTimer();
+        }
         public static void Main(string[] args)
         {
-            SetUpTimer();
-            while (true) { /*no-op*/}
+            // Don't do anything on initialization, this could lead to redundant calls.
+            //SetUpTimer();
+            //while (true) { /*no-op*/}
         }
 
         public static void SetUpTimer()
@@ -213,6 +217,7 @@ namespace HatSync
 
         private static bool CheckIpChange(/*bool forced = false*/)
         {
+            Debug.WriteLine("Called CheckIPChange()");
             IEnumerable<IPAddress> cachedIps = CachedValues.GetCachedIPs();
             System.Collections.Generic.HashSet<System.Net.IPAddress> newIps = GetNewPublicIPs();
             if (newIps == null)
@@ -346,14 +351,29 @@ namespace HatSync
             }
         }
 
-        protected class ImpatientWebClient : System.Net.WebClient
+        private static class ImpatientStringDownloader
         {
-            // We actually use this, but static analyzer thinks we don't.
-            protected override WebRequest GetWebRequest(Uri uri)
+            internal static string GetText(string url)
             {
-                System.Net.WebRequest w = base.GetWebRequest(uri);
-                w.Timeout = 1000 * 10; // 5 seconds
-                return w;
+                using(System.Net.WebClient client = new System.Net.WebClient())
+                {
+                    client.CachePolicy = new RequestCachePolicy(RequestCacheLevel.BypassCache);
+                    client.Encoding = Encoding.UTF8;
+                    client.BaseAddress = url;
+                    try
+                    {
+                        string result = client.DownloadString(url);
+                        return result.Trim();
+                    }
+                    catch (System.Net.WebException e)
+                    {
+                        Log.WriteLine(e.ToString());
+                    }
+
+                    return null;
+
+
+                }
             }
         }
     }

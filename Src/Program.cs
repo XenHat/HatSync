@@ -7,6 +7,7 @@
 // TODO: Remove, and use DotNet Core methods for Linux client portability.
 // See https://adrientorris.github.io/aspnet-core/how-to-implement-timer-netcoreapp1-0-netcoreapp1-1.html
 
+using System;
 using System.Collections.Generic;
 
 namespace HatSync
@@ -54,6 +55,12 @@ namespace HatSync
 #if DEBUG
             System.Console.WriteLine(input);
 #endif
+        }
+
+        internal static void HandleException(object sender, UnhandledExceptionEventArgs args)
+        {
+            Exception e = (Exception)args.ExceptionObject;
+            Log.WriteLine("MyHandler caught : " + e.Message);
         }
     }
 
@@ -217,7 +224,7 @@ namespace HatSync
                         STrayIcon.Visible = true;
 
                         // Run once at startup
-                        IPUpdater.SetUpTimer();
+                        IPUpdater.Init();
 
                         // Attach a context menu.
                         MenuGenerator.RegenerateMenu();
