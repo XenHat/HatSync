@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace HatSync
 {
-    public class IPUpdater
+    public static class IPUpdater
     {
         private static readonly string FetchURLv4 = "http://ifconfig.me/ip";
         private static readonly string FetchURLv6 = "https://ipv6.icanhazip.com"; // TODO: Find a better one.
