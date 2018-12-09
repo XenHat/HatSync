@@ -1,5 +1,6 @@
 ﻿namespace HatSync
 {
+    // Codacy throws an error here, but this class is actually partial. Removing this won't compile.
     internal sealed partial class AboutBox : System.Windows.Forms.Form
     {
         public AboutBox()
