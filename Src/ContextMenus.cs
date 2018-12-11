@@ -2,6 +2,9 @@
 
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
+using System.Diagnostics;
+using System.Threading.Tasks;
+
 namespace HatSync
 {
     public class TrackedToolStripMenuItem
@@ -30,6 +33,7 @@ namespace HatSync
             if (Program.STrayIcon.ContextMenuStrip != null)
             {
                 Program.STrayIcon.ContextMenuStrip.Dispose();
+                Debug.WriteLine("Disposed menu");
             }
 
             // Add the default menu options.
@@ -79,12 +83,12 @@ namespace HatSync
 
             item = new TrackedToolStripMenuItem();
             item.Value.Text = "[TEST] Hash Desktop folder";
-            item.Value.Click += delegate (object sender, System.EventArgs e) { HashTest1_Click(sender, e); };
+            item.Value.Click += async delegate (object sender, System.EventArgs e) { await HashTest1_Click(sender, e); };
             Program.STrayIcon.ContextMenuStrip.Items.Add(item.Value);
 
             item = new TrackedToolStripMenuItem();
             item.Value.Text = "[TEST] Hash C:\\";
-            item.Value.Click += delegate (object sender, System.EventArgs e) { HashTest2_Click(sender, e); };
+            item.Value.Click += async delegate (object sender, System.EventArgs e) { await HashTest2_Click(sender, e); };
             Program.STrayIcon.ContextMenuStrip.Items.Add(item.Value);
 
             item = new TrackedToolStripMenuItem();
@@ -165,13 +169,25 @@ namespace HatSync
             System.Windows.Forms.Application.Exit();
         }
 
-        private static void HashTest1_Click(object sender, System.EventArgs e)
+        private static async 
+        Task
+HashTest1_Click(object sender, System.EventArgs e)
         {
-            SimpleHasher.HashFolder(System.Environment.GetFolderPath(System.Environment.SpecialFolder.DesktopDirectory));
+            await Task.Run(async () =>
+             {
+                 await SimpleHasher.HashFolder(
+                     System.Environment.GetFolderPath(System.Environment.SpecialFolder.DesktopDirectory));
+             });
         }
-        private static void HashTest2_Click(object sender, System.EventArgs e)
+        private static async Task HashTest2_Click(object sender, System.EventArgs e)
         {
-            SimpleHasher.HashFolder(System.IO.Path.GetPathRoot(System.Environment.SystemDirectory));
+            await Task.Run(async () =>
+                {
+                    await SimpleHasher.HashFolder(
+                        System.IO.Path.GetPathRoot(
+                            System.Environment.GetFolderPath(System.Environment.SpecialFolder.Windows)));
+                });
+            
         }
     }
 
